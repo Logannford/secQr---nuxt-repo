@@ -1,3 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.input-dark{
+	@apply bg-dark-black 
+        w-full p-2 md:p-3 md:pl-0 border-b border-onyx-black
+        focus:outline-0 
+}
+
+.button-dark{
+    @apply 
+        bg-dark-black md:bg-light-black text-start p-3 md:px-5 md:py-4 text-white 
+        duration-300 rounded-md border
+        border-onyx-black hover:bg-transparent text-center
+}
+
+.floating-label{
+    @apply absolute left-0 -top-4 text-gray-600
+        pr-2 py-1 rounded-lg
+        peer-placeholder-shown:text-sm 
+        peer-placeholder-shown:text-white 
+        peer-placeholder-shown:top-2 
+        transition-all select-none pointer-events-none
+        peer-focus:-top-4 peer-focus:text-white peer-focus:text-xs 
+}
+
+body, h6{
+    font-family: "Work Sans"
+}
+
+p{
+    font-family: "Solway", sans-serif
+}
+
+h1, h2, h3, h4, h5{
+    font-family: "Corben", sans-serif;
+}
