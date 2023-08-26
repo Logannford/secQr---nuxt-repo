@@ -10,6 +10,7 @@
     "slicemachine": "start-slicemachine"
   },
   "devDependencies": {
+    "@iconify-json/ic": "^1.1.14",
     "@nuxt/devtools": "latest",
     "@nuxthq/ui": "^2.7.0",
     "@nuxtjs/prismic": "^3.0.1",

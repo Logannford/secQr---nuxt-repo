@@ -49,7 +49,7 @@
 						:disabled="!userEmail || loading || completed"
 					>
 						<div class="text-white w-3 h-3 mb-2 animate-bounce disabled:text-red-500">
-							<IconsArrowRight />
+                            <UIcon name="arrow-small-right" />
 						</div>
 					</button>
 				</div>
@@ -91,7 +91,7 @@
 								-translate-x-1/2 group-hover:translate-x-1 duration-500
 							"
 						>
-                            <UIcon name="arrow-small-right" />
+							<UIcon class="text-white w-6 h-6" name="i-ic-baseline-arrow-forward" />
 						</div>
 					</div>
 				</span>
@@ -102,9 +102,9 @@
 
 <script setup lang="ts">
 
-	const userEmail = ref("");
-	const loading = ref(false);
-	const errorOccurred = ref(false);
-	const completed = ref(false);
+	const userEmail = ref('')
+	const loading = ref(false)
+	const errorOccurred = ref(false)
+	const completed = ref(false)
 
 </script>
