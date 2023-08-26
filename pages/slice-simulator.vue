@@ -1,10 +1,10 @@
-<!-- <template>
-  <SliceSimulator #default="{ slices }">
+<template>
+  <!-- <SliceSimulator #default="{ slices }">
     <SliceZone :slices="slices" :components="components" />
-  </SliceSimulator>
+  </SliceSimulator> -->
 </template>
 
 <script setup lang="ts">
-import { SliceSimulator } from "@slicemachine/adapter-nuxt/simulator";
-import { components } from "~/slices";
-</script> -->
+// import { SliceSimulator } from "@slicemachine/adapter-nuxt/simulator";
+// import { components } from "~/slices";
+</script>
