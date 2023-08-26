@@ -1,8 +1,10 @@
-import { getAuth } from "firebase/auth"
+import { getApps } from "firebase/app";
 
 export default defineNuxtRouteMiddleware((to) => {
-	const user = getAuth().currentUser;
-
+	if(!getApps().length)
+		return;
+	const user = useFirebaseUser();
+	
 	//making sure the user cannot navigate off of the holding page
 	if(!user && to.path !== "/holding")
 		return navigateTo('/holding');
