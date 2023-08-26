@@ -1,23 +1,23 @@
 import { createUserWithEmailAndPassword, User, getAuth } from "firebase/auth";
 import { collection, addDoc, getFirestore } from "firebase/firestore"; 
 
-export const useFirebaseSignUp = async (email: string, password: string): Promise<any> => {
+export const useFirebaseSignUp = async (email: string, password: string): Promise<boolean | string> => {
   const user = useState<User | null>("fb_user", () => null);
   const auth = getAuth();
   const db = getFirestore();
   try {
-    const userCreds = await createUserWithEmailAndPassword(
+    const userCredentials = await createUserWithEmailAndPassword(
       auth,
       email,
       password
     );
-    if (userCreds) {
+    if (userCredentials) {
       console.log("user created");
-      user.value = userCreds.user;
+      user.value = userCredentials.user;
 
       // now the user is created, we can add the user to the database
       try {
-        const docRef = await addDoc(collection(db, "users"), {
+        await addDoc(collection(db, "users"), {
           email: email
         })
       } catch(error: unknown){
@@ -26,9 +26,9 @@ export const useFirebaseSignUp = async (email: string, password: string): Promis
       return true;
     }
   } catch (error: unknown) {
-    if (error instanceof Error) 
-		console.error(error.message);
-    return false;
+    if (error instanceof Error){
+      return error.message
+    } 
   }
   return false;
 };
