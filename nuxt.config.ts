@@ -63,6 +63,8 @@ export default defineNuxtConfig({
 
   plugins: ["~/plugins/firebase.client.ts"],
 
+  ssr: false,
+
   prismic: {
     endpoint: 'anonaddress',
   },

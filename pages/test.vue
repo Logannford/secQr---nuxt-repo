@@ -4,11 +4,4 @@
     </div>
 </template>
 
-<script setup lang="ts">
-import { useUserStore } from '~/stores/userStore'
- 
-onMounted(() => {
-  console.log(useUserStore().currentUser); 
-})
-
-</script>
+<script setup lang="ts"></script>
