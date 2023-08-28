@@ -47,17 +47,18 @@
 </template>
 
 <script setup lang="ts">
-import { getApps } from "firebase/app"
-import { User, getAuth } from "firebase/auth"
-import { storeToRefs } from 'pinia'
+import { getAuth } from "firebase/auth"
+import { storeToRefs } from "pinia";
+import { useUserStore } from "~/stores/userStore";
 
 const email = ref<string>("")
 const password = ref<string>("")
 const error = ref<boolean>(false)
 const errorMessage = ref<string>("")
 
-
-const currentUserResponse: User | null = getAuth().currentUser ?? null
+const userStore = useUserStore()
+const currentUser = storeToRefs(userStore)?.currentUser
+const resetUser = userStore?.resetUser
 
 const validEmail = computed<boolean>(() => {
   return /[!@#$%^&*(),.?":{}|<>]/.test(email.value)
@@ -70,9 +71,11 @@ const validPassword = computed<boolean>(() => {
 const loading = ref<boolean>(false);
 
 const handleRegistration = async () => {
-  // thanks firebase for making me do this every file <3
-  if (!getApps().length) 
-    return;
+  // 100% clear out the current user on the sign up page, 
+  // we do this in 'app.vue' on 'sign-up' route change
+  // this is just to triple check
+  if(currentUser.value)
+    resetUser()
 
   loading.value = true;
 
@@ -88,15 +91,14 @@ const handleRegistration = async () => {
   const signUpResult = await signUpPromise
 
   // Check if sign-up was successful or not
+  // sign up result will be true if successful, otherwise the error message as string
   if (signUpResult !== true) {
     error.value = true
     errorMessage.value = signUpResult as string
-  } else {
-    console.log(getAuth().currentUser)
+  } else
     navigateTo("/dashboard")
-  }
 
-
+  //reset the loading state
   loading.value = false
 }
 </script>
