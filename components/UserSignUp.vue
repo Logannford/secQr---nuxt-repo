@@ -57,8 +57,8 @@ const error = ref<boolean>(false)
 const errorMessage = ref<string>("")
 
 const userStore = useUserStore()
-const currentUser = storeToRefs(userStore)?.currentUser
-const resetUser = userStore?.resetUser
+const { currentUser } = storeToRefs(userStore)
+const { resetUser } = userStore
 
 const validEmail = computed<boolean>(() => {
   return /[!@#$%^&*(),.?":{}|<>]/.test(email.value)
@@ -96,7 +96,7 @@ const handleRegistration = async () => {
     error.value = true
     errorMessage.value = signUpResult as string
   } else
-    navigateTo("/dashboard")
+    navigateTo("/subscribe")
 
   //reset the loading state
   loading.value = false

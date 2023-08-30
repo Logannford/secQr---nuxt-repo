@@ -50,6 +50,9 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    private: {
+      stripeSecretKey: '',
+    },
     public: {
       firebaseApiKey: '',
       firebaseAuthDomain: '',
@@ -57,13 +60,13 @@ export default defineNuxtConfig({
       firebaseProjectId: '',
       firebaseStorageBucket: '',
       firebaseMessagingSenderId: '',
-      firebaseAppId: ''
+      firebaseAppId: '',
+
+      appDomain: '',
     }
   },
 
   plugins: ["~/plugins/firebase.client.ts"],
-
-  ssr: false,
 
   prismic: {
     endpoint: 'anonaddress',

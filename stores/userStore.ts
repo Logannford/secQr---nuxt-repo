@@ -1,7 +1,11 @@
+import { getApps } from "firebase/app";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { defineStore } from "pinia";
 
 export const useUserStore = defineStore("userStore", () => {
+  if(!getApps().length)
+    return
+
   type AuthStates = 'init' | 'authed' | 'not-authed'
   const userAuthState = ref<AuthStates>('init');
   
