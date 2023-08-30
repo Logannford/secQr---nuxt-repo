@@ -31,20 +31,21 @@ interface ApiResponse {
   status: string;
 }
 
-const test = ref<ApiResponse | null>() 
+const test = ref<ApiResponse>() 
+
 const stripeTest = async (): Promise<void> => {
-     await useFetch<ApiResponse>('/api/subscribe', {
-      method: 'POST',
-      body: {
-        message: 'hello'
-      }
-    })
-    .then((response) => {
-      test.value = response
-    })
-    .catch(error => {
-      console.error(error)
-    })
+  await useFetch<ApiResponse>('/api/subscribe', {
+    method: 'POST',
+    body: {
+      message: 'hello'
+    }
+  })
+  .then((response: unknown) => {
+    test.value = response as ApiResponse
+  })
+  .catch(error => {
+    console.error(error)
+  })
 };
 
 </script>
