@@ -1,3 +1,19 @@
+## Technologies this Project uses:
+
+- Nuxt 3
+- Vue 3
+- Typescript
+- Tailwind 3
+- Firebase Auth
+- Firebase Firestore
+- Pinia
+- Class Variance Authority
+- Qrious
+- Prismic
+- Cypress
+- NuxtUi
+- Stripe
+
 # Nuxt 3 Minimal Starter
 
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.

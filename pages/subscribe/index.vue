@@ -6,21 +6,23 @@
         name="lookup_key"
         value="price_1NkT0nIkd2lyiipNx9owdIQF"
       />
-      <input type="hidden" name="customer_id" :value="currentUser?.uid" />
+      <input type="hidden" name="customer_id" :value="currentUser" />
       <button type="submit" class="text-black bg-white rounded px-4 py-2">
         Test btn
       </button>
     </form>
     {{ test }}
+    {{ currentUser }}
   </div>
 </template>
 
 <script setup lang="ts">
 import { User } from "firebase/auth"
 import { useUserStore } from "~/stores/userStore"
+import { storeToRefs } from "pinia";
 
-// @ts-ignore
-const { currentUser } = useUserStore()
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
 
 interface ApiResponse {
   data: {
@@ -34,11 +36,13 @@ interface ApiResponse {
 const test = ref<ApiResponse>() 
 
 const stripeTest = async (): Promise<void> => {
+  const params = {
+    msg: 'hello'
+  }
+
   await useFetch<ApiResponse>('/api/subscribe', {
     method: 'POST',
-    body: {
-      message: 'hello'
-    }
+    body: params
   })
   .then((response: unknown) => {
     test.value = response as ApiResponse

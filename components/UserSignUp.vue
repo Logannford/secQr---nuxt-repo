@@ -57,7 +57,7 @@ const error = ref<boolean>(false)
 const errorMessage = ref<string>("")
 
 const userStore = useUserStore()
-const { currentUser } = storeToRefs(userStore)
+const currentUser = storeToRefs(userStore)
 const { resetUser } = userStore
 
 const validEmail = computed<boolean>(() => {
@@ -74,7 +74,7 @@ const handleRegistration = async () => {
   // 100% clear out the current user on the sign up page, 
   // we do this in 'app.vue' on 'sign-up' route change
   // this is just to triple check
-  if(currentUser.value)
+  if(currentUser)
     resetUser()
 
   loading.value = true;
