@@ -11,44 +11,48 @@
         Test btn
       </button>
     </form>
-    {{ test }}
     {{ currentUser }}
   </div>
 </template>
 
 <script setup lang="ts">
-import { User } from "firebase/auth"
-import { useUserStore } from "~/stores/userStore"
-import { storeToRefs } from "pinia";
+import { useUserStore } from '~/stores/userStore'
+import { storeToRefs } from 'pinia';
+import Stripe from 'stripe';
 
 const userStore = useUserStore()
-const { currentUser } = storeToRefs(userStore)
+// as on the store this is a ref, we need to use 
+// storeToRefs to get the value
+const { currentUser } = storeToRefs(userStore);
 
-interface ApiResponse {
-  data: {
-    message: string;
-  };
-  pending: boolean;
-  error: any;
-  status: string;
-}
+const stripeResponse = ref<Stripe.Customer>(); 
 
-const test = ref<ApiResponse>() 
+const stripeTest = async (): Promise<void | Error> => {
 
-const stripeTest = async (): Promise<void> => {
-  const params = {
-    msg: 'hello'
+  // get the email out of the currentUser ref
+  const currentUserEmail = currentUser?.value?.email;
+
+  // we need the user email address, for now we'll just throw an error
+  if (!currentUserEmail){
+    throw createError({
+      statusCode: 400,
+      message: 'No user email address found',
+    });
   }
 
-  await useFetch<ApiResponse>('/api/subscribe', {
+  // create a form data object to pass to the api
+  const formData = new FormData();  
+  formData.append('customerEmail', currentUserEmail);
+
+  await useFetch<Stripe.Customer>('/api/subscribe', {
     method: 'POST',
-    body: params
+    body: formData
   })
   .then((response: unknown) => {
-    test.value = response as ApiResponse
+    stripeResponse.value = response as Stripe.Customer;
   })
   .catch(error => {
-    console.error(error)
+    console.error(error);
   })
 };
 
