@@ -1,4 +1,3 @@
-import { NuxtError } from 'nuxt/app';
 import Stripe from 'stripe';
 
 export default defineEventHandler(async (event) => {
@@ -24,7 +23,7 @@ export default defineEventHandler(async (event) => {
   //            CUSTOMER LOOKUP / CREATION METHODS 
 
   // do a look up to see if we already have the email address as a customer
-  const findCustomer = async (userEmail: string): Promise<Stripe.Response<Stripe.ApiList<Stripe.Customer>> | Boolean> => {
+  const findCustomer = async (userEmail: string): Promise<Stripe.Customer | Boolean> => {
     try{
       // try to search for the customer via their email address
       const existingCustomer: Stripe.Response<Stripe.ApiList<Stripe.Customer>> = await stripe.customers.list({
@@ -46,7 +45,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // create a new customer - pass in params such as an object
-  const createNewCustomer = async (customerParams: Stripe.CustomerCreateParams): Promise<Stripe.Customer | NuxtError> => {
+  const createNewCustomer = async (customerParams: Stripe.CustomerCreateParams): Promise<Stripe.Customer> => {
     try{
       // create a new customer
       const customer: Stripe.Customer = await stripe.customers.create(
@@ -78,7 +77,7 @@ export default defineEventHandler(async (event) => {
     */
     const paymentIntent: Stripe.PaymentIntent = await stripe.paymentIntents.create({
       // this will need to change to a param passed in - this is fine for now
-      amount: 10,
+      amount: 1000,
       currency: 'gbp',
       automatic_payment_methods: {
         enabled: true,
@@ -94,19 +93,22 @@ export default defineEventHandler(async (event) => {
   }
 
   // first we will check if the user already exists in stripe
-  let currentUser: Stripe.Customer | Stripe.Response<Stripe.ApiList<Stripe.Customer>> | Boolean = ;
+  let currentUser: Stripe.Customer | Boolean | null = null;
 
   currentUser = await findCustomer(userEmail);
 
   // if the response if false, we need to create a new customer
   // create the new customer 
-  if(!currentUser){
+  if(!currentUser) {
     const newCustomerParams: Stripe.CustomerCreateParams = {
       email: userEmail
     };
-    currentUser.value = await createNewCustomer(newCustomerParams);
+    currentUser = await createNewCustomer(newCustomerParams);
   }
 
+  // create a payment intent for the user
+  const paymentIntentSecret = await paymentIntentCreation(currentUser as Stripe.Customer);
+
   // get the params from the request body
-  return await createNewCustomer();
+  return await paymentIntentSecret;
 });

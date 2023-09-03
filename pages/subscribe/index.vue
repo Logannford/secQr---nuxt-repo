@@ -11,7 +11,7 @@
         Test btn
       </button>
     </form>
-    {{ currentUser }}
+    {{ stripeResponse }}
   </div>
 </template>
 
@@ -28,7 +28,6 @@ const { currentUser } = storeToRefs(userStore);
 const stripeResponse = ref<Stripe.Customer>(); 
 
 const stripeTest = async (): Promise<void | Error> => {
-
   // get the email out of the currentUser ref
   const currentUserEmail = currentUser?.value?.email;
 
@@ -44,9 +43,12 @@ const stripeTest = async (): Promise<void | Error> => {
   const formData = new FormData();  
   formData.append('customerEmail', currentUserEmail);
 
+  
   await useFetch<Stripe.Customer>('/api/subscribe', {
     method: 'POST',
-    body: formData
+    body: {
+      customerEmail: currentUserEmail
+    }
   })
   .then((response: unknown) => {
     stripeResponse.value = response as Stripe.Customer;
