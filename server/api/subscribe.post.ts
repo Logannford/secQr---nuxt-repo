@@ -63,53 +63,24 @@ export default defineEventHandler(async (event) => {
 
   //              PAYMENT INTENT CREATION METHOD
 
-  const paymentIntentCreation = async (customer: Stripe.Customer): Promise<Stripe.PaymentIntent | Boolean> => {
-    // we need the customer id in order to create a payment intent in this situation
-    if(!customer.id)
-      return false;
-    /*
-       create a payment intent 
-        - a payment intent is an api that tracks the lifecycle
-          of a checkout flow, it can be used to trigger additional
-          authentication steps when required by law or a card issuer.
-
-        will return a client secret.
-    */
-    const paymentIntent: Stripe.PaymentIntent = await stripe.paymentIntents.create({
-      // this will need to change to a param passed in - this is fine for now
-      amount: 1000,
-      currency: 'gbp',
-      automatic_payment_methods: {
-        enabled: true,
-      },
-      customer: customer.id
-    });
-
-    // check if we got a client secret back from the payment intent
-    const clientSecret = paymentIntent.client_secret;
-    if(!clientSecret)
-      return false;
-    return paymentIntent;
-  }
-
   /**
    * Invoices are statements of amounts owed by a customer, 
    * and are either generated one-off, or generated periodically 
    * from a subscription
    * 
    * @param user 
-   * @returns 
+   * @returns clientSecret OR Null
    */
 
-  const createAnInvoice = async (user: Stripe.Customer, paymentIntent: Stripe.PaymentIntent):Promise<Stripe.Invoice> => {
+  const createAnInvoice = async (user: Stripe.Customer):Promise<string | null> => {
 
     // we need the payment intent and user
-    if(!paymentIntent || !user){
+    if(!user || !user.email){
       throw createError({
         statusCode: 400,
         message: 'Missing payment intent AND / OR user'
       })
-    }
+    };
 
     // try to create the invoice
     try {
@@ -117,11 +88,11 @@ export default defineEventHandler(async (event) => {
         customer: user?.id,
         description: 'Test Invoice',
         auto_advance: true,
+
         // automatic_tax: {
         //   enabled: true
         // },
-        currency: 'gbp',
-        
+        currency: 'gbp'
       });
 
       // create an invoice item
@@ -133,18 +104,54 @@ export default defineEventHandler(async (event) => {
       await stripe.invoiceItems.create({
         invoice: invoice?.id,
         customer: user?.id,
-        unit_amount: paymentIntent?.amount,
+        unit_amount: 1000,
         currency: 'gbp'
       });
 
-      const finalizedInvoice = stripe.invoices.finalizeInvoice(
+      const finalizedInvoice = await stripe.invoices.finalizeInvoice(
         invoice.id,
         {
           auto_advance: true
         }
       );
 
-      return finalizedInvoice;
+      const paymentIntentId = finalizedInvoice?.payment_intent;
+
+      if(!paymentIntentId){
+        throw createError({
+          statusCode: 500,
+          message: 'Failed to finalize invoice'
+        })
+      };
+
+      let paymentIntent: Stripe.PaymentIntent | null;
+
+      // if the payment intent is a string, we need to update it
+      if(typeof paymentIntentId === 'string'){
+        paymentIntent = await stripe. paymentIntents.retrieve(
+          paymentIntentId
+        );
+      }
+
+      // update the payment intent with the new payment intent id
+      paymentIntent = await stripe.paymentIntents.update(
+        paymentIntentId as string,
+        {
+          metadata: {
+            email: user?.email,
+            amount: 1000
+          },
+          receipt_email: user?.email
+        }
+      );
+
+      if(!paymentIntent.client_secret)
+        throw createError({
+          statusCode: 500,
+          message: 'Failed to create payment intent'
+        });
+
+      return paymentIntent?.client_secret;
     }
     catch(error: any){
       console.error(error);
@@ -185,15 +192,14 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // create a payment intent for the user
-  const paymentIntent = await paymentIntentCreation(currentUser as Stripe.Customer);
-
   const invoice = await createAnInvoice(
-    currentUser as Stripe.Customer, 
-    paymentIntent as Stripe.PaymentIntent
+    currentUser as Stripe.Customer 
   );
-
+  
   // get the params from the request body
-  // @ts-ignore
-  return await invoice;
+  return {
+    invoice,
+    price: 1000,
+    paymentEmail: userEmail
+  };
 });

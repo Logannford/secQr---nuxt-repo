@@ -11,7 +11,7 @@
         Test btn
       </button>
     </form>
-    {{ stripeResponse }}
+    <div ref="stripePaymentsElements"></div>
   </div>
 </template>
 
@@ -20,14 +20,32 @@ import { useUserStore } from '~/stores/userStore'
 import { storeToRefs } from 'pinia';
 import Stripe from 'stripe';
 
+interface StripeResponse {
+  paymentEmail: string;
+  paymentPrice: number;
+  paymentClientSecret: string;
+}
+
 const userStore = useUserStore()
 // as on the store this is a ref, we need to use 
 // storeToRefs to get the value
 const { currentUser } = storeToRefs(userStore);
 
-const stripeResponse = ref<Stripe.PaymentIntent>(); 
+let stripeElements;
 
 const stripeTest = async (): Promise<void | Error> => {
+  console.log('first')
+
+
+  const config = useRuntimeConfig();
+
+  // create a new stripe instance for the elements
+  const stripe = new Stripe('sk_test_51NkSBxIkd2lyiipNYgXjMIo00yWmxdWBBzHOOEgUDjEIFD1boaZegULaJGFnL9YRFr0ID61Km6GE2XYwvdG3IdcC00iES1k5TF', {
+    apiVersion: '2023-08-16',
+  });
+
+  console.log('second')
+
   // get the email out of the currentUser ref
   const currentUserEmail = currentUser?.value?.email;
 
@@ -39,22 +57,52 @@ const stripeTest = async (): Promise<void | Error> => {
     });
   }
 
+  console.log('third')
+
   // create a form data object to pass to the api
   const formData = new FormData();  
   formData.append('customerEmail', currentUserEmail);
   
-  await useFetch<Stripe.PaymentIntent>('/api/subscribe', {
-    method: 'POST',
-    body: {
-      customerEmail: currentUserEmail
+  try{
+    const stripeResponse = await useFetch<StripeResponse | null>('/api/subscribe', {
+      method: 'POST',
+      body: {
+        customerEmail: currentUserEmail
+      }
+    });
+
+    console.log('fourth')
+
+    const {
+      paymentEmail,
+      paymentPrice,
+      paymentClientSecret
+    } = await stripeResponse;
+  }   
+  catch(err){
+    throw createError({
+      statusCode: 400,
+      message: 'Error creating stripe payment',
+    });
+  };
+
+    try{
+      stripeElements = stripe.elements({
+        clientSecret: paymentClientSecret,
+        appearance: {
+          theme: 'stripe'
+        }
+      });
     }
-  })
-  .then((response: unknown) => {
-    stripeResponse.value = response as Stripe.PaymentIntent;
-  })
-  .catch(error => {
-    console.error(error);
-  })
+    catch(err){
+      throw createError({
+        statusCode: 400,
+        message: 'Error creating stripe elements',
+      });
+    }
+
+    const paymentElements = stripeElements.create('payment');
+    paymentElements.mount(ref.stripePaymentsElements)
 };
 
 </script>
