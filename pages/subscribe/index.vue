@@ -25,7 +25,7 @@ const userStore = useUserStore()
 // storeToRefs to get the value
 const { currentUser } = storeToRefs(userStore);
 
-const stripeResponse = ref<Stripe.Customer>(); 
+const stripeResponse = ref<Stripe.PaymentIntent>(); 
 
 const stripeTest = async (): Promise<void | Error> => {
   // get the email out of the currentUser ref
@@ -42,16 +42,15 @@ const stripeTest = async (): Promise<void | Error> => {
   // create a form data object to pass to the api
   const formData = new FormData();  
   formData.append('customerEmail', currentUserEmail);
-
   
-  await useFetch<Stripe.Customer>('/api/subscribe', {
+  await useFetch<Stripe.PaymentIntent>('/api/subscribe', {
     method: 'POST',
     body: {
       customerEmail: currentUserEmail
     }
   })
   .then((response: unknown) => {
-    stripeResponse.value = response as Stripe.Customer;
+    stripeResponse.value = response as Stripe.PaymentIntent;
   })
   .catch(error => {
     console.error(error);

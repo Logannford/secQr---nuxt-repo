@@ -92,9 +92,76 @@ export default defineEventHandler(async (event) => {
     return paymentIntent;
   }
 
+  /**
+   * Invoices are statements of amounts owed by a customer, 
+   * and are either generated one-off, or generated periodically 
+   * from a subscription
+   * 
+   * @param user 
+   * @returns 
+   */
+
+  const createAnInvoice = async (user: Stripe.Customer, paymentIntent: Stripe.PaymentIntent):Promise<Stripe.Invoice> => {
+
+    // we need the payment intent and user
+    if(!paymentIntent || !user){
+      throw createError({
+        statusCode: 400,
+        message: 'Missing payment intent AND / OR user'
+      })
+    }
+
+    // try to create the invoice
+    try {
+      const invoice: Stripe.Invoice = await stripe.invoices.create({
+        customer: user?.id,
+        description: 'Test Invoice',
+        auto_advance: true,
+        // automatic_tax: {
+        //   enabled: true
+        // },
+        currency: 'gbp',
+        
+      });
+
+      // create an invoice item
+      /**
+       * Invoice Items represent the component lines of an invoice. An invoice item is added to an 
+       * invoice by creating or updating it  with an invoice field, at which point it will be 
+       * included as an invoice line item within invoice.lines.
+       */
+      await stripe.invoiceItems.create({
+        invoice: invoice?.id,
+        customer: user?.id,
+        unit_amount: paymentIntent?.amount,
+        currency: 'gbp'
+      });
+
+      const finalizedInvoice = stripe.invoices.finalizeInvoice(
+        invoice.id,
+        {
+          auto_advance: true
+        }
+      );
+
+      return finalizedInvoice;
+    }
+    catch(error: any){
+      console.error(error);
+      throw createError({
+        statusCode: 500,
+        message: error.message
+      })
+    }
+  };
+
+
+  //              MAIN FLOW
+
   // first we will check if the user already exists in stripe
   let currentUser: Stripe.Customer | Boolean | null = null;
 
+  // see if we already have the customer
   currentUser = await findCustomer(userEmail);
 
   // if the response if false, we need to create a new customer
@@ -103,12 +170,30 @@ export default defineEventHandler(async (event) => {
     const newCustomerParams: Stripe.CustomerCreateParams = {
       email: userEmail
     };
-    currentUser = await createNewCustomer(newCustomerParams);
+
+    try {
+      currentUser = await createNewCustomer(newCustomerParams);
+
+      if(currentUser)
+        return currentUser;
+    }
+    catch(error: any){
+      throw createError({
+        statusCode: 500,
+        message: error.message
+      })
+    }
   }
 
   // create a payment intent for the user
-  const paymentIntentSecret = await paymentIntentCreation(currentUser as Stripe.Customer);
+  const paymentIntent = await paymentIntentCreation(currentUser as Stripe.Customer);
+
+  const invoice = await createAnInvoice(
+    currentUser as Stripe.Customer, 
+    paymentIntent as Stripe.PaymentIntent
+  );
 
   // get the params from the request body
-  return await paymentIntentSecret;
+  // @ts-ignore
+  return await invoice;
 });
