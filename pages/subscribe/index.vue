@@ -6,24 +6,31 @@
         name="lookup_key"
         value="price_1NkT0nIkd2lyiipNx9owdIQF"
       />
-      <input type="hidden" name="customer_id" :value="currentUser" />
+      <input type="hidden" name="customer_id" :value="currentUser?.uid" />
       <button type="submit" class="text-black bg-white rounded px-4 py-2">
         Test btn
       </button>
     </form>
-    <div ref="stripePaymentsElements"></div>
+    <div class="p-10 rounded">
+      <div class="w-full bg-white p-10">
+        <div ref="stripeElementMount"></div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useUserStore } from '~/stores/userStore'
 import { storeToRefs } from 'pinia';
-import Stripe from 'stripe';
+import { loadStripe } from '@stripe/stripe-js';
+
+// stripe-js is a dependency of @stripe/stripe-js
+const stripe = await loadStripe(useRuntimeConfig().public.stripePublicKey);
 
 interface StripeResponse {
-  paymentEmail: string;
+  email: string;
   paymentPrice: number;
-  paymentClientSecret: string;
+  invoice: string;
 }
 
 const userStore = useUserStore()
@@ -31,21 +38,11 @@ const userStore = useUserStore()
 // storeToRefs to get the value
 const { currentUser } = storeToRefs(userStore);
 
-let stripeElements;
+const stripeElementMount = ref<HTMLDivElement | null>(null);
+const stripeElements = ref();
+const clientSecret = ref<string>();
 
 const stripeTest = async (): Promise<void | Error> => {
-  console.log('first')
-
-
-  const config = useRuntimeConfig();
-
-  // create a new stripe instance for the elements
-  const stripe = new Stripe('sk_test_51NkSBxIkd2lyiipNYgXjMIo00yWmxdWBBzHOOEgUDjEIFD1boaZegULaJGFnL9YRFr0ID61Km6GE2XYwvdG3IdcC00iES1k5TF', {
-    apiVersion: '2023-08-16',
-  });
-
-  console.log('second')
-
   // get the email out of the currentUser ref
   const currentUserEmail = currentUser?.value?.email;
 
@@ -57,27 +54,27 @@ const stripeTest = async (): Promise<void | Error> => {
     });
   }
 
-  console.log('third')
-
   // create a form data object to pass to the api
   const formData = new FormData();  
   formData.append('customerEmail', currentUserEmail);
   
   try{
-    const stripeResponse = await useFetch<StripeResponse | null>('/api/subscribe', {
+    const stripeResponse = await useFetch<StripeResponse>('/api/subscribe', {
       method: 'POST',
       body: {
         customerEmail: currentUserEmail
       }
     });
 
-    console.log('fourth')
-
     const {
-      paymentEmail,
+      email,
       paymentPrice,
-      paymentClientSecret
-    } = await stripeResponse;
+      invoice
+    } = await stripeResponse?.data?.value;
+
+
+    clientSecret.value = invoice;
+
   }   
   catch(err){
     throw createError({
@@ -86,23 +83,30 @@ const stripeTest = async (): Promise<void | Error> => {
     });
   };
 
-    try{
-      stripeElements = stripe.elements({
-        clientSecret: paymentClientSecret,
-        appearance: {
-          theme: 'stripe'
-        }
-      });
-    }
-    catch(err){
+  try {
+    if(!stripe)
       throw createError({
         statusCode: 400,
         message: 'Error creating stripe elements',
       });
-    }
 
-    const paymentElements = stripeElements.create('payment');
-    paymentElements.mount(ref.stripePaymentsElements)
+      stripeElements.value = stripe.elements({
+        clientSecret: clientSecret.value,
+        appearance: {
+          theme: 'stripe'
+        }
+      });
+  }
+  catch(err){
+    throw createError({
+      statusCode: 400,
+      message: 'Error creating stripe elements',
+    });
+  }
+
+  // mount the payment element to the DOM
+  const paymentElements = stripeElements.value.create('payment');
+  paymentElements.mount(stripeElementMount.value);
 };
 
 </script>
