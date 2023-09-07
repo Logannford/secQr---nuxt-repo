@@ -1,32 +1,80 @@
 <template>
-  <NuxtLink to="/subscribe" class="text-white">
-      Back
-  </NuxtLink>
-  <form 
-    class="w-full bg-light-black p-10 flex flex-col gap-y-10"
-    onsubmit="event.preventDefault()"
-    @submit="handlePayment()"
-  >
-    <h2 class="text-white">
-      Payment Details
-    </h2>
-    <div v-if="loading" class="text-white w-full flex justify-center">
-      loading..
-    </div>
-    <div ref="stripeElementMount"></div>
+  <div class="">
+    <div class="grid grid-cols-12 h-screen">
+      <div class="bg-white col-span-8 border-r border-light-grey">
+        <div class="flex flex-col gap-y-10 p-10">
+          <div class="w-full flex justify-center">
+            <h1 class="text-4xl">
+              secQr
+            </h1>
+          </div>
+          <div class="border border-gray-300 rounded p-3">
+            <!-- account email -->
+            <div class="flex gap-x-16 text-sm">
+              <span>
+                Contact
+              </span>
+              {{ currentUserEmail }}
+            </div>
+          </div>
 
-    <button 
-      class="bg-white rounded text-black px-4 py-2"
-      type="submit"
-    >
-      <span v-if="paymentLoading">
-        loading...
-      </span>
-      <span v-else>
-        Confirm £{{ customerPaymentPrice }}
-      </span>
-    </button>
-  </form>
+          <!-- payment form -->
+          <form
+            class="w-full flex flex-col gap-y-10 h-full place-content-center"
+            onsubmit="event.preventDefault()"
+            @submit="handlePayment()"
+          >
+            <span class="text-black">Payment Details</span>
+            <div class="border border-gray-300 p-5 rounded">
+              <div v-if="loading" class="text-black w-full flex justify-center">
+                <Spinner class="w-5 h-5" />
+              </div>
+              <!-- injected elements via stripe -->
+              <div ref="stripeElementMount"></div>
+            </div>
+
+            <div class="w-full flex justify-between">
+              <div>
+                <NuxtLink to="/subscribe"> 
+                  &lt Back 
+                </NuxtLink>
+              </div>
+
+              <button class="bg-black rounded-lg text-white px-4 py-2" type="submit">
+                <span v-if="paymentLoading"> 
+                    <Spinner class="w-5 h-5" />
+                </span>
+                <div v-else class="flex gap-x-2 items-center"> 
+                  <span>
+                    Confirm 
+                  </span>
+                  <Spinner v-if="loading" class="w-4 h-5" />
+                </div>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="text-black bg-white/95 col-span-4">
+        <div class="p-5 w-full">
+          <div class="flex justify-between items-center">
+            <span>
+              Total: 
+            </span>
+            <div class="flex gap-x-2 items-center">
+              <span class="text-xs">
+                GBP
+              </span>
+              <span class="text-2xl" v-if="!loading">
+                 £{{ customerPaymentPrice ? customerPaymentPrice / 100 : '' }}
+              </span>
+              <Spinner v-else class="w-5 h-5" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -50,18 +98,28 @@ const stripeElementMount = ref<HTMLDivElement | null>(null);
 const stripeElements = ref();
 const paymentIntentClientSecret = ref<string>();
 const customerPaymentPrice = ref<number>();
-let currentUserEmail = currentUser?.value?.email ?? null;
+const currentUserEmail = ref<string>();
 
 onMounted(async () => {
   console.log("payment mounted");
   //start loading
   loading.value = true;
 
-  if (!currentUserEmail){
-    currentUserEmail = new URLSearchParams(window.location.search).get(
-      "customerEmail"
-    );
+  currentUserEmail.value = new URLSearchParams(window.location.search).get(
+    "customerEmail"
+  ) as string | undefined;
+
+  if (!currentUserEmail) {
+    currentUserEmail.value = currentUser?.value?.email;
   }
+
+  if (!currentUserEmail)
+    throw createError({
+      statusCode: 400,
+      message: "Error getting user email",
+    });
+
+  console.log(currentUserEmail);
 
   try {
     const stripeResponse = await useFetch<StripeResponse>("/api/subscribe", {
@@ -71,14 +129,14 @@ onMounted(async () => {
       },
     });
 
-    console.log(stripeResponse?.data?.value)
+    console.log(stripeResponse?.data?.value);
 
-    if (!stripeResponse?.data?.value){
+    if (!stripeResponse?.data?.value) {
       router.push({
         path: "/subscribe",
         query: {
-          error: 'true'
-        }
+          error: "true",
+        },
       });
       throw createError({
         statusCode: 400,
@@ -86,18 +144,14 @@ onMounted(async () => {
       });
     }
 
-    const { 
-      invoice, 
-      paymentEmail, 
-      paymentPrice 
-    } = await stripeResponse?.data?.value;
+    const { invoice, paymentEmail, paymentPrice } = await stripeResponse?.data
+      ?.value;
 
     paymentIntentClientSecret.value = invoice;
     customerPaymentPrice.value = paymentPrice;
 
     try {
-      if (!stripe) 
-        return;
+      if (!stripe) return;
 
       stripeElements.value = stripe.elements({
         clientSecret: paymentIntentClientSecret.value,
@@ -126,19 +180,16 @@ onMounted(async () => {
   paymentElements.mount(stripeElementMount.value);
 });
 
-const handlePayment = async() => {
+const handlePayment = async (): Promise<Error | void> => {
   paymentLoading.value = true;
-  try {
-    const response = await stripe?.confirmPayment({
-      elements: stripeElements.value,
-      confirmParams: {
-        return_url: `${window.location.origin}/subscribe/payment-success`,
-      },
-    });
-  }catch(error: any){
-
-  }
+  await stripe?.confirmPayment({
+    elements: stripeElements.value,
+    confirmParams: {
+      return_url: `${window.location.origin}/subscribe/payment-success`,
+      receipt_email: currentUserEmail.value,
+    },
+  });
 
   paymentLoading.value = false;
-}
+};
 </script>

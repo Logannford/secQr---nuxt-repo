@@ -8,13 +8,13 @@
         v-if="errorOccurred"
         class=""
       >
-        It appears an error has occurred, please try again.
+        An error has occurred, please try again.
       </div>
       <input
+        v-if="!currentUserSignedIn"
         type="text"
         v-model="userEmail"
         class="text-black bg-white rounded px-4 py-2"
-        v-if="!currentUserSignedIn"
       />
       <button 
         type="submit" 
@@ -53,7 +53,6 @@ if(currentUserSignedIn)
 const errorOccurred = ref<boolean>(false);
 
 onMounted(() => {
-
   const urlParams = new URLSearchParams(window.location.search);
 
   if(urlParams.has('error'))
@@ -63,10 +62,10 @@ onMounted(() => {
 const userStripeDetails = async (): Promise<void | Error> => {
   loading.value = true;
 
+  // force at least a second delay for loading
   const res = new Promise((res) => setTimeout(res, 1000));
-
   await res;
-  
+
     route.push({
       path: `/subscribe/payment`,
       query: {
