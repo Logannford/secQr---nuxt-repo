@@ -8,14 +8,21 @@
               secQr
             </h1>
           </div>
+          <!-- put these into an object, v-for it to prevent this mess -->
           <div class="border border-gray-300 rounded p-3">
             <!-- account email -->
-            <div class="flex gap-x-16 text-sm">
-              <span>
-                Contact
-              </span>
-              {{ currentUserEmail }}
-            </div>
+              <div 
+                v-for="(value, key) in paymentDetails"
+                :key="key"
+                class="grid grid-cols-6 text-sm gap-y-4"
+              > 
+                <span class="col-span-2 font-bold">
+                  {{ key }}: 
+                </span>
+                <span class="col-span-4">
+                  {{ value }}
+                </span>
+              </div>
           </div>
 
           <!-- payment form -->
@@ -24,7 +31,9 @@
             onsubmit="event.preventDefault()"
             @submit="handlePayment()"
           >
-            <span class="text-black">Payment Details</span>
+            <span class="text-black">
+              Payment Details
+            </span>
             <div class="border border-gray-300 p-5 rounded">
               <div v-if="loading" class="text-black w-full flex justify-center">
                 <Spinner class="w-5 h-5" />
@@ -36,17 +45,21 @@
             <div class="w-full flex justify-between">
               <div>
                 <NuxtLink to="/subscribe"> 
-                  &lt Back 
+                  <UIcon name="i-heroicons-arrow-small-left" />Back to Information
                 </NuxtLink>
               </div>
 
-              <button class="bg-black rounded-lg text-white px-4 py-2" type="submit">
+              <button 
+                class="bg-black rounded-lg text-white px-4 py-2 disabled:opacity-50" 
+                type="submit"
+                :disabled="loading || paymentLoading"
+              >
                 <span v-if="paymentLoading"> 
                     <Spinner class="w-5 h-5" />
                 </span>
                 <div v-else class="flex gap-x-2 items-center"> 
                   <span>
-                    Confirm 
+                    Pay now 
                   </span>
                   <Spinner v-if="loading" class="w-4 h-5" />
                 </div>
@@ -66,7 +79,7 @@
                 GBP
               </span>
               <span class="text-2xl" v-if="!loading">
-                 £{{ customerPaymentPrice ? customerPaymentPrice / 100 : '' }}
+                 £{{ paymentDetails.paymentPrice }}
               </span>
               <Spinner v-else class="w-5 h-5" />
             </div>
@@ -99,6 +112,11 @@ const stripeElements = ref();
 const paymentIntentClientSecret = ref<string>();
 const customerPaymentPrice = ref<number>();
 const currentUserEmail = ref<string>();
+
+const paymentDetails = reactive({
+  paymentEmail: "",
+  paymentPrice: 0
+})
 
 onMounted(async () => {
   console.log("payment mounted");
@@ -144,11 +162,11 @@ onMounted(async () => {
       });
     }
 
-    const { invoice, paymentEmail, paymentPrice } = await stripeResponse?.data
-      ?.value;
+    const { invoice, paymentEmail, paymentPrice } = await stripeResponse?.data?.value;
 
     paymentIntentClientSecret.value = invoice;
-    customerPaymentPrice.value = paymentPrice;
+    paymentDetails.paymentPrice = (paymentPrice / 100);
+    paymentDetails.paymentEmail = paymentEmail;
 
     try {
       if (!stripe) return;
