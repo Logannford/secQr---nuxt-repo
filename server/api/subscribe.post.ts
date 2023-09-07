@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import { StripeResponse } from '~/types/StripeResponse';
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
@@ -13,6 +14,7 @@ export default defineEventHandler(async (event) => {
 
   // if the params do not contain a customer email, we need to cancel the flow
   const userEmail = params?.customerEmail;  
+
   if(!userEmail){
     throw createError({
       statusCode: 400,
@@ -165,41 +167,47 @@ export default defineEventHandler(async (event) => {
 
   //              MAIN FLOW
 
-  // first we will check if the user already exists in stripe
-  let currentUser: Stripe.Customer | Boolean | null = null;
+  const createSubscription = async(): Promise<StripeResponse | null> => {
+    // first we will check if the user already exists in stripe
+    let currentUser: Stripe.Customer | Boolean | null = null;
 
-  // see if we already have the customer
-  currentUser = await findCustomer(userEmail);
+    // see if we already have the customer
+    currentUser = await findCustomer(userEmail);
 
-  // if the response if false, we need to create a new customer
-  // create the new customer 
-  if(!currentUser) {
-    const newCustomerParams: Stripe.CustomerCreateParams = {
-      email: userEmail
+    // if the response if false, we need to create a new customer
+    // create the new customer 
+    if(!currentUser) {
+      const newCustomerParams: Stripe.CustomerCreateParams = {
+        email: userEmail
+      };
+
+      try {
+        currentUser = await createNewCustomer(newCustomerParams);
+
+        if(!currentUser)
+          return null;
+      }
+      catch(error: any){
+        throw createError({
+          statusCode: 500,
+          message: error.message
+        })
+      }
+    }
+
+    const invoice = await createAnInvoice(
+      currentUser as Stripe.Customer 
+    );
+    
+    if(!invoice )
+      return null;
+
+    return {
+      invoice,
+      paymentPrice: 1000,
+      paymentEmail: userEmail
     };
-
-    try {
-      currentUser = await createNewCustomer(newCustomerParams);
-
-      if(currentUser)
-        return currentUser;
-    }
-    catch(error: any){
-      throw createError({
-        statusCode: 500,
-        message: error.message
-      })
-    }
   }
 
-  const invoice = await createAnInvoice(
-    currentUser as Stripe.Customer 
-  );
-  
-  // get the params from the request body
-  return {
-    invoice,
-    price: 1000,
-    paymentEmail: userEmail
-  };
+  return await createSubscription();
 });
