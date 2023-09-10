@@ -9,19 +9,23 @@
             </h1>
           </div>
           <!-- put these into an object, v-for it to prevent this mess -->
-          <div class="border border-gray-300 rounded p-3">
+          <div class="border border-gray-300 rounded px-3">
             <!-- account email -->
               <div 
-                v-for="(value, key) in paymentDetails"
+                v-for="(value, key, index) in paymentDetails"
                 :key="key"
-                class="grid grid-cols-6 text-sm gap-y-4"
+                class="grid grid-cols-6 text-sm py-3"
+                :class="{
+                  'border-t border-gray-300': index !== 0,
+                }"
               > 
                 <span class="col-span-2 font-bold">
                   {{ key }}: 
                 </span>
-                <span class="col-span-4">
+                <span class="col-span-4" v-if="!loading">
                   {{ value }}
-                </span>
+                </span> 
+                <Spinner v-else class="w-4 h-4" />
               </div>
           </div>
 
@@ -44,8 +48,11 @@
 
             <div class="w-full flex justify-between">
               <div>
-                <NuxtLink to="/subscribe"> 
-                  <UIcon name="i-heroicons-arrow-small-left" />Back to Information
+                <UIcon name="i-octicon-chevron-left-24" class="w-5 h-5 block"/> 
+                <NuxtLink to="/pricing" class="flex gap-x-2"> 
+                  <span>
+                    Back to Information
+                  </span>
                 </NuxtLink>
               </div>
 
@@ -79,7 +86,7 @@
                 GBP
               </span>
               <span class="text-2xl" v-if="!loading">
-                 £{{ paymentDetails.paymentPrice }}
+                 £{{ paymentDetails.Price }}
               </span>
               <Spinner v-else class="w-5 h-5" />
             </div>
@@ -114,12 +121,11 @@ const customerPaymentPrice = ref<number>();
 const currentUserEmail = ref<string>();
 
 const paymentDetails = reactive({
-  paymentEmail: "",
-  paymentPrice: 0
+  Email: currentUserEmail.value,
+  Price: 0
 })
 
 onMounted(async () => {
-  console.log("payment mounted");
   //start loading
   loading.value = true;
 
@@ -127,7 +133,7 @@ onMounted(async () => {
     "customerEmail"
   ) as string | undefined;
 
-  if (!currentUserEmail) {
+  if (!currentUserEmail.value) {
     currentUserEmail.value = currentUser?.value?.email;
   }
 
@@ -151,7 +157,7 @@ onMounted(async () => {
 
     if (!stripeResponse?.data?.value) {
       router.push({
-        path: "/subscribe",
+        path: "/pricing",
         query: {
           error: "true",
         },
@@ -165,8 +171,8 @@ onMounted(async () => {
     const { invoice, paymentEmail, paymentPrice } = await stripeResponse?.data?.value;
 
     paymentIntentClientSecret.value = invoice;
-    paymentDetails.paymentPrice = (paymentPrice / 100);
-    paymentDetails.paymentEmail = paymentEmail;
+    paymentDetails.Price = (paymentPrice / 100);
+    paymentDetails.Email = paymentEmail;
 
     try {
       if (!stripe) return;
@@ -203,7 +209,7 @@ const handlePayment = async (): Promise<Error | void> => {
   await stripe?.confirmPayment({
     elements: stripeElements.value,
     confirmParams: {
-      return_url: `${window.location.origin}/subscribe/payment-success`,
+      return_url: `${window.location.origin}/pricing/payment-success`,
       receipt_email: currentUserEmail.value,
     },
   });

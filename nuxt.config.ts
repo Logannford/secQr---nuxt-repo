@@ -46,7 +46,7 @@ export default defineNuxtConfig({
   },
 
   ui: {
-    icons: 'ic'
+    icons: 'octicon'
   },
 
   runtimeConfig: {

@@ -96,7 +96,7 @@ const handleRegistration = async () => {
     error.value = true
     errorMessage.value = signUpResult as string
   } else
-    navigateTo("/subscribe")
+    navigateTo("/pricing")
 
   //reset the loading state
   loading.value = false
