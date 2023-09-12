@@ -25,7 +25,7 @@
                 <span class="col-span-4" v-if="!loading">
                   {{ value }}
                 </span> 
-                <Spinner v-else class="w-4 h-4" />
+                <Spinner v-else class="w-5 h-5" />
               </div>
           </div>
 
