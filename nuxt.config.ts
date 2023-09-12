@@ -32,7 +32,7 @@ export default defineNuxtConfig({
 		}
 	},
   css: ['~/assets/css/main.css'],
-  modules: ['@nuxthq/ui', '@pinia/nuxt', '@nuxtjs/prismic'],
+  modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxtjs/prismic'],
 
   postcss: {
     plugins: {
@@ -46,10 +46,13 @@ export default defineNuxtConfig({
   },
 
   ui: {
-    icons: 'ic'
+    icons: 'octicon'
   },
 
   runtimeConfig: {
+    private: {
+      stripeSecretKey: '',
+    },
     public: {
       firebaseApiKey: '',
       firebaseAuthDomain: '',
@@ -57,13 +60,14 @@ export default defineNuxtConfig({
       firebaseProjectId: '',
       firebaseStorageBucket: '',
       firebaseMessagingSenderId: '',
-      firebaseAppId: ''
+      firebaseAppId: '',
+
+      appDomain: '',
+      stripePublicKey: '',
     }
   },
 
   plugins: ["~/plugins/firebase.client.ts"],
-
-  ssr: false,
 
   prismic: {
     endpoint: 'anonaddress',

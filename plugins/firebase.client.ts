@@ -21,15 +21,17 @@ export default defineNuxtPlugin(nuxtApp => {
   };
 
   // Initialize Firebase
-  if(!getApps().length)
-    initializeApp(firebaseConfig);
-    
-  const auth = getAuth(initializeApp(firebaseConfig));
-
+  const apps = getApps()
+  const firebaseApp = !apps.length ? initializeApp(firebaseConfig) : apps[0]
+  const firebaseAuth = getAuth(firebaseApp)
   const db = getFirestore(initializeApp(firebaseConfig));
 
-  nuxtApp.vueApp.provide('auth', auth)
-  nuxtApp.provide('auth', auth)
-  nuxtApp.vueApp.provide('firestore', db)
-  nuxtApp.provide('firestore', db)
+  useFirebaseUser()
+
+  return {
+    provide: {
+      firebaseApp,
+      firebaseAuth,
+    },
+  }
 });
