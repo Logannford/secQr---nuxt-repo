@@ -117,8 +117,7 @@ const { currentUser } = storeToRefs(userStore);
 const stripeElementMount = ref<HTMLDivElement | null>(null);
 const stripeElements = ref();
 const paymentIntentClientSecret = ref<string>();
-const customerPaymentPrice = ref<number>();
-const currentUserEmail = ref<string>();
+const currentUserEmail = ref<string | undefined | null>();
 
 const paymentDetails = reactive({
   Email: currentUserEmail.value,
@@ -137,9 +136,11 @@ onMounted(async () => {
     "planType"
   ) as string | undefined;
 
+  // if there is nothing in the url, check the store
   if (!currentUserEmail.value)
     currentUserEmail.value = currentUser?.value?.email;
 
+  // if we still do not have the email, throw an error
   if (!currentUserEmail)
     throw createError({
       statusCode: 400,

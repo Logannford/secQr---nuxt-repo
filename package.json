@@ -33,6 +33,7 @@
     "@vueuse/core": "^10.3.0",
     "class-variance-authority": "^0.7.0",
     "firebase": "^10.3.0",
+    "firebase-admin": "^11.10.1",
     "heroicons": "^2.0.18",
     "pinia": "^2.1.6",
     "qrious": "^4.0.2",
