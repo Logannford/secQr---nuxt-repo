@@ -3,24 +3,14 @@ import { StripeResponse } from '~/types/StripeResponse';
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
+
+  // params that come from the front end (request body)
+  const params = await readBody(event);
   
   //create a new stripe instance
   const stripe = new Stripe(config.private.stripeSecretKey, {
     apiVersion: '2023-08-16',
   });
-  
-  // params that come from the front end (request body)
-  const params = await readBody(event);
-
-  // if the params do not contain a customer email, we need to cancel the flow
-  const userEmail = params?.customerEmail;  
-
-  if(!userEmail){
-    throw createError({
-      statusCode: 400,
-      message: 'Missing customer email'
-    })
-  }
 
   //            CUSTOMER LOOKUP / CREATION METHODS 
 
@@ -74,7 +64,7 @@ export default defineEventHandler(async (event) => {
    * @returns clientSecret OR Null
    */
 
-  const createAnInvoice = async (user: Stripe.Customer):Promise<string | null> => {
+  const createAnInvoice = async (user: Stripe.Customer, amount: number):Promise<string | null> => {
 
     // we need the payment intent and user
     if(!user || !user.email){
@@ -106,8 +96,9 @@ export default defineEventHandler(async (event) => {
       await stripe.invoiceItems.create({
         invoice: invoice?.id,
         customer: user?.id,
-        unit_amount: 1000,
-        currency: 'gbp'
+        unit_amount: amount,
+        currency: 'gbp',
+        quantity: 1
       });
 
       const finalizedInvoice = await stripe.invoices.finalizeInvoice(
@@ -141,7 +132,7 @@ export default defineEventHandler(async (event) => {
         {
           metadata: {
             email: user?.email,
-            amount: 1000
+            amount: amount
           },
           receipt_email: user?.email
         }
@@ -164,12 +155,41 @@ export default defineEventHandler(async (event) => {
     }
   };
 
-
   //              MAIN FLOW
 
   const createSubscription = async(): Promise<StripeResponse | null> => {
+
+    console.log(params)
+
+    // if the params do not contain a customer email, we need to cancel the flow
+    const userEmail = params?.customerEmail;  
+    const planType = params?.planType
+
+    // if(!userEmail || !planType){
+    //   throw createError({
+    //     statusCode: 400,
+    //     message: 'Missing customer email OR plan type'
+    //   })
+    // }
+
+    const planTypes = [
+      {
+        name: 'single',
+        price: 199
+      },
+      {
+        name: 'monthly',
+        price: 499
+      },
+      {
+        name: 'yearly',
+        price: 699
+      }
+    ];
+
     // first we will check if the user already exists in stripe
     let currentUser: Stripe.Customer | Boolean | null = null;
+    const currentPlanType = planTypes.find((plan) => plan.name === planType);
 
     // see if we already have the customer
     currentUser = await findCustomer(userEmail);
@@ -196,7 +216,8 @@ export default defineEventHandler(async (event) => {
     }
 
     const invoice = await createAnInvoice(
-      currentUser as Stripe.Customer 
+      currentUser as Stripe.Customer,
+      currentPlanType?.price as number
     );
     
     if(!invoice )
@@ -204,7 +225,7 @@ export default defineEventHandler(async (event) => {
 
     return {
       invoice,
-      paymentPrice: 1000,
+      paymentPrice: currentPlanType?.price as number,
       paymentEmail: userEmail
     };
   }

@@ -10,7 +10,7 @@
         <TestQr />
       </div>
       <div class="flex flex-col gap-y-2 h-full justify-between">
-        <div>
+        <div class="flex flex-col gap-y-1">
             <h6 class="font-bold text-2xl">
             {{ cardProps.title }}
             </h6>
@@ -33,7 +33,7 @@
             <div class="text-2xl font-bold mt-10">
                 £{{ (price / 100) }}
             </div>
-            <Button type="submit">
+            <Button type="submit" :disabled="loading" size="medium" intent="primary">
                 {{ loading ? 'Loading...' : 'Buy Now' }}
             </Button>
         </div>
@@ -43,6 +43,10 @@
 </template>
 
 <script setup lang="ts">
+import { useUserStore } from '~/stores/userStore'
+import { storeToRefs } from 'pinia';
+
+const userStore = useUserStore()
 const cardProps = defineProps<{
   title: string;
   planType: string;
@@ -53,7 +57,10 @@ const cardProps = defineProps<{
 
 const route = useRouter();
 const loading = ref<boolean>(false);
-const userEmail = ref<string>("");
+
+const { currentUser } = storeToRefs(userStore);
+
+const currentUserSignedIn = currentUser?.value?.email;
 
 const userStripeDetails = async (): Promise<void | Error> => {
   loading.value = true;
@@ -64,10 +71,10 @@ const userStripeDetails = async (): Promise<void | Error> => {
     route.push({
       path: `/pricing/payment`,
       query: {
-        customerEmail: userEmail.value,
-        planType: cardProps.planType
+        customerEmail: currentUserSignedIn,
+        planType: cardProps.planType,
       },
-  }); 
+    }); 
   loading.value = false;
 };
 </script>

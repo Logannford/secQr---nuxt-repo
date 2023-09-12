@@ -133,9 +133,12 @@ onMounted(async () => {
     "customerEmail"
   ) as string | undefined;
 
-  if (!currentUserEmail.value) {
+  const planType = new URLSearchParams(window.location.search).get(
+    "planType"
+  ) as string | undefined;
+
+  if (!currentUserEmail.value)
     currentUserEmail.value = currentUser?.value?.email;
-  }
 
   if (!currentUserEmail)
     throw createError({
@@ -143,13 +146,14 @@ onMounted(async () => {
       message: "Error getting user email",
     });
 
-  console.log(currentUserEmail);
+  console.log(currentUserEmail.value);
 
   try {
     const stripeResponse = await useFetch<StripeResponse>("/api/subscribe", {
       method: "POST",
       body: {
         customerEmail: currentUserEmail,
+        planType: planType
       },
     });
 
