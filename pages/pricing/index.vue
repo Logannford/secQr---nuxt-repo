@@ -24,7 +24,7 @@
         :key="index"
         :title="item.name"
         :planType="item.planType"
-        :shortDescription="item.shortDescription"
+        :shortDescription="item.shortDescription" 
         :price="item.price"
         :bulletPoints="item.bulletPoints"
         :mostPopular="item.mostPopular"
