@@ -1,41 +1,64 @@
 <template>
   <form
-    class="border rounded-xl border-gray-400 bg-white text-dark-black w-full h-full"
+    class="rounded-xl bg-white text-dark-black w-full shadow-lg shadow-gray-300 overflow-hidden duration-300"
     @submit.prevent="userStripeDetails()"
+    :class="[
+      cardProps.mostPopular 
+        ? 'border-4 border-light-purple h-full'
+        : 'border border-gray-400 h-full lg:h-[95%] hover:h-full',
+      cardProps.index === 2
+        ? 'col-span-full lg:col-span-1'
+        : 'col-span-1',
+    ]"
   >
     <div
-      class="p-10 flex flex-col gap-y-4 items-center text-center h-full"
-    >
-      <div class="border rounded border-gray-400 w-10 h-10">
-        <TestQr />
+      class="
+        flex flex-col items-center 
+        text-center h-full relative overflow-hidden
+      "
+    > 
+      <div v-if="cardProps.mostPopular" class="w-full h-[5%] bg-light-purple text-white">
+        Most popular
       </div>
-      <div class="flex flex-col gap-y-2 h-full justify-between">
-        <div class="flex flex-col gap-y-1">
-            <h6 class="font-bold text-2xl">
-            {{ cardProps.title }}
-            </h6>
-            <div>
-            <p class="text-xs">
-                {{ cardProps.shortDescription }}
-            </p>
-            </div>
-            <ul class="text-start mt-6 flex flex-col gap-y-2">
-                <li 
-                    v-for="(items, index) in bulletPoints" 
-                    :key="index"
-                    class="list-disc"
-                >
-                    {{ items }}
-                </li>
-            </ul>
+      <div class="container inside-container flex flex-col items-center text-center h-full">
+        <div class="rounded w-14 h-14">
+          <TestQr />
         </div>
-        <div class="flex flex-col gap-y-1">
-            <div class="text-2xl font-bold mt-10">
-                £{{ (price / 100) }}
-            </div>
-            <Button type="submit" :disabled="loading" size="medium" intent="primary">
-                {{ loading ? 'Loading...' : 'Buy Now' }}
-            </Button>
+        <div class="flex flex-col gap-y-2 h-full justify-between">
+          <div class="flex flex-col gap-y-1">
+              <h6 class="font-bold text-2xl">
+              {{ cardProps.title }}
+              </h6>
+              <div>
+              <p class="text-xs">
+                  {{ cardProps.shortDescription }}
+              </p>
+              </div>
+              <ul class="text-start mt-10 flex flex-col gap-y-3 text-sm">
+                  <li 
+                      v-for="(items, index) in bulletPoints" 
+                      :key="index"
+                      class="flex gap-x-2"
+                  >
+                    <div class="w-4 h-4 bg-secqr-purple-500 flex p-1 rounded-full text-white">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                        <path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/>
+                      </svg>
+                    </div>
+                    <span>
+                      {{ items }}
+                    </span>
+                  </li>
+              </ul>
+          </div>
+          <div class="flex flex-col gap-y-4">
+              <div class="text-2xl font-bold">
+                  £{{ (price / 100) }}
+              </div>
+              <ElementButton type="submit" :disabled="loading" size="medium" intent="primary">
+                  {{ loading ? 'Loading...' : 'Start now' }}
+              </ElementButton>
+          </div>
         </div>
       </div>
     </div>
@@ -53,6 +76,8 @@ const cardProps = defineProps<{
   price: number;
   shortDescription: string;
   bulletPoints: string[];
+  mostPopular?: boolean;
+  index: number
 }>();
 
 const route = useRouter();
