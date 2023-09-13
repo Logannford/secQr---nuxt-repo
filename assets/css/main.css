@@ -1,3 +1,6 @@
+/* CSS imports */
+@import "containers.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -26,13 +29,14 @@
 }
 
 body, h6 {
-    font-family: "Work Sans"
+    font-family: "Dosis";
+    letter-spacing: 0.025rem;
 }
 
 p {
-    font-family: "Solway", sans-serif
+    font-family: "Quicksand", sans-serif
 }
 
 h1, h2, h3, h4, h5 {
-    font-family: "Solway", sans-serif;
+    font-family: "Quicksand", sans-serif;
 }

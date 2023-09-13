@@ -9,13 +9,25 @@ module.exports = {
     "./app.vue",
   ],
   theme: {
+    container: {
+			center: true,
+			padding: {
+				DEFAULT: '1rem',
+				'xs'	 : '1rem',
+				'sm'	 : '2rem',
+				'md'	 : '2rem',
+				'lg'	 : '2rem',
+				'xl'	 : '2rem',
+				'2xl'	 : '4rem'
+			}
+		},
     extend: {
       colors: {
         "dark-black": "#0A0A0A",
         "light-black": "#1c1c1c",
         "onyx-black": "#3E3E3E",
         "light-grey": "#B6B6B6",
-        "dark-purple": "#7d3eea"
+        "dark-purple": "#240046"
       },
       animation: {
         text: 'text 5s ease infinite',

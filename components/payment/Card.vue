@@ -1,12 +1,25 @@
 <template>
   <form
-    class="border rounded-xl border-gray-400 bg-white text-dark-black w-full h-full"
+    class="border rounded-xl bg-white text-dark-black w-full shadow-lg shadow-gray-300"
     @submit.prevent="userStripeDetails()"
+    :class="[
+      cardProps.mostPopular 
+        ? 'border-dark-purple h-full'
+        : 'border-gray-400 h-[95%]',
+    ]"
   >
     <div
-      class="p-10 flex flex-col gap-y-4 items-center text-center h-full"
-    >
-      <div class="border rounded border-gray-400 w-10 h-10">
+      class="
+        container inside-container flex flex-col gap-y-4 items-center 
+        text-center h-full relative
+      "
+    > 
+      <div v-if="cardProps.mostPopular" class="absolute -top-3">
+        <ElementChip class="uppercase font-bold">
+          Most popular
+        </ElementChip>
+      </div>
+      <div class="rounded w-14 h-14">
         <TestQr />
       </div>
       <div class="flex flex-col gap-y-2 h-full justify-between">
@@ -19,7 +32,7 @@
                 {{ cardProps.shortDescription }}
             </p>
             </div>
-            <ul class="text-start mt-6 flex flex-col gap-y-2">
+            <ul class="text-start mt-6 flex flex-col gap-y-2 text-xs">
                 <li 
                     v-for="(items, index) in bulletPoints" 
                     :key="index"
@@ -29,12 +42,12 @@
                 </li>
             </ul>
         </div>
-        <div class="flex flex-col gap-y-1">
+        <div class="flex flex-col gap-y-4">
             <div class="text-2xl font-bold mt-10">
                 £{{ (price / 100) }}
             </div>
             <Button type="submit" :disabled="loading" size="medium" intent="primary">
-                {{ loading ? 'Loading...' : 'Buy Now' }}
+                {{ loading ? 'Loading...' : 'Start now' }}
             </Button>
         </div>
       </div>
@@ -53,6 +66,7 @@ const cardProps = defineProps<{
   price: number;
   shortDescription: string;
   bulletPoints: string[];
+  mostPopular?: boolean;
 }>();
 
 const route = useRouter();

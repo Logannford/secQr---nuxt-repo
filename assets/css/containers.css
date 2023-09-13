@@ -1,0 +1,5 @@
+@responsive {
+    .inside-container {
+        @apply py-2 lg:py-4
+    }
+}

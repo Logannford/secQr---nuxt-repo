@@ -1,20 +1,20 @@
 <template>
   <div 
     class="
-      text-white h-screen w-full flex flex-col gap-y-6
+      text-white h-screen w-full flex flex-col gap-y-12
       justify-center items-center bg-white/95
     "
   >
     <div class="flex flex-col items-center gap-y-3 text-black">
-      <span class="bg-white/30 px-4 py-2 rounded-xl text-xs">
-        Take back control of your online data
-      </span>
-      <p class="text-3xl">
+      <h6 class="bg-white/30 px-4 py-2 rounded-xl text-xs">
         Pricing
-      </p>
+      </h6>
+      <h1 class="text-5xl font-bold">
+        Plans Available
+      </h1>
     </div>
     <div 
-      class="grid grid-cols-3 gap-x-3 w-3/4"
+      class="grid grid-cols-3 gap-x-3 w-3/5 items-end h-4/6"
     >
       <PaymentCard 
         v-for="(item, index) in itemOptions"
@@ -24,6 +24,7 @@
         :shortDescription="item.shortDescription"
         :price="item.price"
         :bulletPoints="item.bulletPoints"
+        :mostPopular="item.mostPopular"
       />
     </div>
   </div>
@@ -52,6 +53,7 @@ interface ItemOptions {
   price: number;
   shortDescription?: string;
   bulletPoints: string[];
+  mostPopular?: boolean;
 }
 
 const itemOptions: ItemOptions[] = [
@@ -75,7 +77,8 @@ const itemOptions: ItemOptions[] = [
       "Allows for multiple Address QR codes to be generated.",
       "Can be used unlimited times.",
       "Can track all orders from the dashboard for the month.",
-    ]
+    ],
+    mostPopular: true
   },
   {
     name: "Yearly",
