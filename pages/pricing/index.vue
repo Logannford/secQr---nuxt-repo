@@ -6,17 +6,17 @@
     "
   >
     <div class="flex flex-col items-center gap-y-3 text-black">
-      <h6 class="bg-light-purple/20 px-4 py-2 rounded-xl text-xs text-white">
+      <h6 class="bg-light-purple/20 px-4 py-2 rounded-xl text-xs text-dark-purple">
         Pricing
       </h6>
-      <h1 class="text-5xl font-bold">
+      <h1 class="text-5xl font-bold text-dark-purple">
         Plans Available
       </h1>
     </div>
     <div 
       class="
         grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-5 
-        w-[65%] items-end h-full lg:h-4/6
+        w-5/6 xl:w-[65%] items-end h-full lg:h-3/4
       "
     >
       <PaymentCard 
