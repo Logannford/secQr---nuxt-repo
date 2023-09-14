@@ -99,6 +99,16 @@ export interface NavigationItemSliceDefaultItem {
    * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
    */
   child_link: prismic.LinkField;
+
+  /**
+   * child item img field in *NavigationItem → Items*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: navigation_item.items[].child_item_img
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  child_item_img: prismic.ImageField<never>;
 }
 
 /**

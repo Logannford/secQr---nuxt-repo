@@ -15,10 +15,10 @@ module.exports = {
 				DEFAULT: '1rem',
 				'xs'	 : '1rem',
 				'sm'	 : '2rem',
-				'md'	 : '2rem',
-				'lg'	 : '2rem',
-				'xl'	 : '2rem',
-				'2xl'	 : '4rem'
+				'md'	 : '4rem',
+				'lg'	 : '5rem',
+				'xl'	 : '5rem',
+				'2xl'	 : '8rem'
 			}
 		},
     extend: {

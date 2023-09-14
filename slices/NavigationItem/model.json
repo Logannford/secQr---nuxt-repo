@@ -47,6 +47,14 @@
             "placeholder": "",
             "select": null
           }
+        },
+        "child_item_img": {
+          "type": "Image",
+          "config": {
+            "label": "child item img",
+            "constraint": {},
+            "thumbnails": []
+          }
         }
       }
     }

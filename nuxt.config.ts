@@ -13,7 +13,7 @@ export default defineNuxtConfig({
                 }
             ],
             bodyAttrs: {
-                class: "bg-dark-black w-full"
+                class: "w-full"
             },
             link: [
                     {

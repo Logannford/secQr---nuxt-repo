@@ -6,7 +6,7 @@
     "
   >
     <div class="flex flex-col items-center gap-y-3 text-black">
-      <h6 class="bg-light-purple/20 px-4 py-2 rounded-xl text-xs text-dark-purple">
+      <h6 class="bg-gray-200 px-4 py-2 rounded-xl text-xs text-dark-purple">
         Pricing
       </h6>
       <h1 class="text-5xl font-bold text-dark-purple">
