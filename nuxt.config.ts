@@ -13,7 +13,7 @@ export default defineNuxtConfig({
                 }
             ],
             bodyAttrs: {
-                class: "w-full"
+                class: "bg-white/95 w-full"
             },
             link: [
                     {
@@ -30,18 +30,18 @@ export default defineNuxtConfig({
                     },
           {
             rel: "stylesheet",
-            href: "https://fonts.googleapis.com/css2?family=Dosis"
-          },
-          {
-            rel: "stylesheet",
             href: "https://fonts.googleapis.com/css2?family=Quicksand"
           },
           {
             rel: "stylesheet",
             href: "https://fonts.googleapis.com/css2?family=Karla"
+          },
+          {
+            rel: "stylesheet",
+            href: "https://fonts.googleapis.com/css2?family=Cairo"
           }
-            ]
-        }
+        ]
+      }
     },
   css: ['~/assets/css/main.css'],
   modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxtjs/prismic'],

@@ -38,16 +38,13 @@
 import { useUserStore } from '~/stores/userStore'
 import { storeToRefs } from 'pinia';
 
-const userStore = useUserStore()
+const userStore = useUserStore();
 // as on the store this is a ref, we need to use 
 // storeToRefs to get the value
 const { currentUser } = storeToRefs(userStore);
 
 const userEmail = ref<string>("");
 const currentUserSignedIn = currentUser?.value?.email;
-
-if(currentUserSignedIn)
-  userEmail.value = currentUserSignedIn;
 
 const errorOccurred = ref<boolean>(false);
 
@@ -66,10 +63,16 @@ const itemOptions: ItemOptions[] = [
     planType: "single",
     price: 199,
     shortDescription: "1 Time Purchase",
+    // bulletPoints: [
+    //   "Allows for 1 Address QR code to be generated.",
+    //   "Unlimited uses.",
+    //   "Can only be used to generate home address - not custom information."
+    // ],
     bulletPoints: [
-      "Allows for 1 Address QR code to be generated.",
-      "Unlimited uses.",
-      "Can only be used to generate home address - not custom information."
+      "test bullet point 1",
+      "test bullet point 2",
+      "test bullet point 3",
+      "test bullet point 4"
     ]
   },
   {
@@ -77,12 +80,18 @@ const itemOptions: ItemOptions[] = [
     planType: "monthly",
     price: 499,
     shortDescription: "Monthly Subscription with unlimited QR code generation",
+    // bulletPoints: [
+    //   "ALL single time purchase features.",
+    //   "Allows for multiple Address QR codes to be generated.",
+    //   "Can be used unlimited times.",
+    //   "Can track all orders from the dashboard for the month.",
+    //   "Can generate QR codes with custom information."
+    // ],,
     bulletPoints: [
-      "ALL single time purchase features.",
-      "Allows for multiple Address QR codes to be generated.",
-      "Can be used unlimited times.",
-      "Can track all orders from the dashboard for the month.",
-      "Can generate QR codes with custom information."
+      "test bullet point 1",
+      "test bullet point 2",
+      "test bullet point 3",
+      "test bullet point 4"
     ],
     mostPopular: true
   },
@@ -91,16 +100,25 @@ const itemOptions: ItemOptions[] = [
     planType: "yearly",
     price: 699,
     shortDescription: "Yearly Subscription with unlimited QR code generation",
+    // bulletPoints: [
+    //   "ALL single time purchase and monthly subscription features",
+    //   "Allows for multiple Address QR codes to be generated.",
+    //   "Can be used Unlimited times.",
+    //   "A detailed breakdown on all orders for the year."
+    // ],
     bulletPoints: [
-      "ALL single time purchase and monthly subscription features",
-      "Allows for multiple Address QR codes to be generated.",
-      "Can be used Unlimited times.",
-      "A detailed breakdown on all orders for the year."
+      "test bullet point 1",
+      "test bullet point 2",
+      "test bullet point 3",
+      "test bullet point 4"
     ]
   },
 ];
 
 onMounted(() => {
+  if(currentUserSignedIn)
+    userEmail.value = currentUserSignedIn;
+    
   const urlParams = new URLSearchParams(window.location.search);
 
   if(urlParams.has('error'))

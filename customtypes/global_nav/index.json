@@ -22,6 +22,14 @@
           "placeholder": ""
         }
       },
+      "child_menu": {
+        "type": "Link",
+        "config": {
+          "label": "child menu",
+          "select": "document",
+          "customtypes": ["nav_child_item"]
+        }
+      },
       "slices": {
         "type": "Slices",
         "fieldset": "Slice Zone",

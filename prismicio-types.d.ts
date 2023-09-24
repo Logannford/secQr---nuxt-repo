@@ -22,6 +22,17 @@ interface GlobalNavDocumentData {
   name: prismic.RichTextField;
 
   /**
+   * child menu field in *global nav*
+   *
+   * - **Field Type**: Content Relationship
+   * - **Placeholder**: *None*
+   * - **API ID Path**: global_nav.child_menu
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+   */
+  child_menu: prismic.ContentRelationshipField<"nav_child_item">;
+
+  /**
    * Slice Zone field in *global nav*
    *
    * - **Field Type**: Slice Zone
@@ -49,7 +60,41 @@ export type GlobalNavDocument<Lang extends string = string> =
     Lang
   >;
 
-export type AllDocumentTypes = GlobalNavDocument;
+type NavChildItemDocumentDataSlicesSlice = NavigationItemSlice;
+
+/**
+ * Content for nav child item documents
+ */
+interface NavChildItemDocumentData {
+  /**
+   * Slice Zone field in *nav child item*
+   *
+   * - **Field Type**: Slice Zone
+   * - **Placeholder**: *None*
+   * - **API ID Path**: nav_child_item.slices[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/field#slices
+   */
+  slices: prismic.SliceZone<NavChildItemDocumentDataSlicesSlice>;
+}
+
+/**
+ * nav child item document from Prismic
+ *
+ * - **API ID**: `nav_child_item`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/custom-types
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type NavChildItemDocument<Lang extends string = string> =
+  prismic.PrismicDocumentWithUID<
+    Simplify<NavChildItemDocumentData>,
+    "nav_child_item",
+    Lang
+  >;
+
+export type AllDocumentTypes = GlobalNavDocument | NavChildItemDocument;
 
 /**
  * Primary content in *NavigationItem → Primary*
@@ -154,6 +199,9 @@ declare module "@prismicio/client" {
       GlobalNavDocument,
       GlobalNavDocumentData,
       GlobalNavDocumentDataSlicesSlice,
+      NavChildItemDocument,
+      NavChildItemDocumentData,
+      NavChildItemDocumentDataSlicesSlice,
       AllDocumentTypes,
       NavigationItemSlice,
       NavigationItemSliceDefaultPrimary,

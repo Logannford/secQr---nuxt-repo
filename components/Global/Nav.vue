@@ -1,5 +1,5 @@
 <template>
-  <nav class="text-black bg-white/95">
+  <nav class="text-black bg-white/95 shadow-black shadow-lg">
     <div
       class="flex items-center justify-between w-full container inside-container"
     >
@@ -122,16 +122,12 @@ const handleMouseOver = (itemIndex: number) => {
 
 const handleMouseLeave = () => {
   isMouseOver.value = false;
-  if (!isMouseOver.value && active.value){
+  if (!isMouseOver.value && active.value)
     active.value = false;
-  };
 };
 
-const handleMegaMenuItem = () => {
-
-}
-
 onMounted(() => {
-  console.log(nav.value?.results[0].data.slices);
+  console.log(nav.value);
+  //console.log(nav.value?.results[0].data.slices);
 });
 </script>
