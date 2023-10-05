@@ -60,6 +60,51 @@ export type GlobalNavDocument<Lang extends string = string> =
     Lang
   >;
 
+type LayoutDocumentDataSlicesSlice = MenuItemSlice;
+
+/**
+ * Content for Layout documents
+ */
+interface LayoutDocumentData {
+  /**
+   * Dashboard CTA label field in *Layout*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: layout.dashboard_cta_label
+   * - **Tab**: Header
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  dashboard_cta_label: prismic.KeyTextField;
+
+  /**
+   * Slice Zone field in *Layout*
+   *
+   * - **Field Type**: Slice Zone
+   * - **Placeholder**: *None*
+   * - **API ID Path**: layout.slices[]
+   * - **Tab**: Header
+   * - **Documentation**: https://prismic.io/docs/field#slices
+   */
+  slices: prismic.SliceZone<LayoutDocumentDataSlicesSlice>;
+}
+
+/**
+ * Layout document from Prismic
+ *
+ * - **API ID**: `layout`
+ * - **Repeatable**: `false`
+ * - **Documentation**: https://prismic.io/docs/custom-types
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type LayoutDocument<Lang extends string = string> =
+  prismic.PrismicDocumentWithoutUID<
+    Simplify<LayoutDocumentData>,
+    "layout",
+    Lang
+  >;
+
 type NavChildItemDocumentDataSlicesSlice = NavigationItemSlice;
 
 /**
@@ -94,7 +139,183 @@ export type NavChildItemDocument<Lang extends string = string> =
     Lang
   >;
 
-export type AllDocumentTypes = GlobalNavDocument | NavChildItemDocument;
+type SubMenuDocumentDataSlicesSlice = HeadingSlice | SubMenuItemSlice;
+
+/**
+ * Content for Sub menu documents
+ */
+interface SubMenuDocumentData {
+  /**
+   * Slice Zone field in *Sub menu*
+   *
+   * - **Field Type**: Slice Zone
+   * - **Placeholder**: *None*
+   * - **API ID Path**: sub_menu.slices[]
+   * - **Tab**: Column 1
+   * - **Documentation**: https://prismic.io/docs/field#slices
+   */
+  slices: prismic.SliceZone<SubMenuDocumentDataSlicesSlice>;
+}
+
+/**
+ * Sub menu document from Prismic
+ *
+ * - **API ID**: `sub_menu`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/custom-types
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type SubMenuDocument<Lang extends string = string> =
+  prismic.PrismicDocumentWithUID<
+    Simplify<SubMenuDocumentData>,
+    "sub_menu",
+    Lang
+  >;
+
+export type AllDocumentTypes =
+  | GlobalNavDocument
+  | LayoutDocument
+  | NavChildItemDocument
+  | SubMenuDocument;
+
+/**
+ * Primary content in *Heading → Primary*
+ */
+export interface HeadingSliceDefaultPrimary {
+  /**
+   * Label field in *Heading → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: heading.primary.label
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  label: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for Heading Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type HeadingSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<HeadingSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *Heading*
+ */
+type HeadingSliceVariation = HeadingSliceDefault;
+
+/**
+ * Heading Shared Slice
+ *
+ * - **API ID**: `heading`
+ * - **Description**: Heading
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type HeadingSlice = prismic.SharedSlice<
+  "heading",
+  HeadingSliceVariation
+>;
+
+/**
+ * Primary content in *MenuItem → Primary*
+ */
+export interface MenuItemSliceDefaultPrimary {
+  /**
+   * Label field in *MenuItem → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: menu_item.primary.label
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  label: prismic.KeyTextField;
+
+  /**
+   * Link field in *MenuItem → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: menu_item.primary.link
+   * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+   */
+  link: prismic.LinkField;
+}
+
+/**
+ * Default variation for MenuItem Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type MenuItemSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<MenuItemSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Primary content in *MenuItem → Primary*
+ */
+export interface MenuItemSliceWithSubMenuPrimary {
+  /**
+   * Label field in *MenuItem → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: menu_item.primary.label
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  label: prismic.KeyTextField;
+
+  /**
+   * Sub menu field in *MenuItem → Primary*
+   *
+   * - **Field Type**: Content Relationship
+   * - **Placeholder**: *None*
+   * - **API ID Path**: menu_item.primary.sub_menu
+   * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+   */
+  sub_menu: prismic.ContentRelationshipField<"sub_menu">;
+}
+
+/**
+ * With Sub Menu variation for MenuItem Slice
+ *
+ * - **API ID**: `withSubMenu`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type MenuItemSliceWithSubMenu = prismic.SharedSliceVariation<
+  "withSubMenu",
+  Simplify<MenuItemSliceWithSubMenuPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *MenuItem*
+ */
+type MenuItemSliceVariation = MenuItemSliceDefault | MenuItemSliceWithSubMenu;
+
+/**
+ * MenuItem Shared Slice
+ *
+ * - **API ID**: `menu_item`
+ * - **Description**: MenuItem
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type MenuItemSlice = prismic.SharedSlice<
+  "menu_item",
+  MenuItemSliceVariation
+>;
 
 /**
  * Primary content in *NavigationItem → Primary*
@@ -186,6 +407,150 @@ export type NavigationItemSlice = prismic.SharedSlice<
   NavigationItemSliceVariation
 >;
 
+/**
+ * Primary content in *SubMenuItem → Primary*
+ */
+export interface SubMenuItemSliceDefaultPrimary {
+  /**
+   * Link field in *SubMenuItem → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: sub_menu_item.primary.link
+   * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+   */
+  link: prismic.LinkField;
+
+  /**
+   * Label field in *SubMenuItem → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: sub_menu_item.primary.label
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  label: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for SubMenuItem Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type SubMenuItemSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<SubMenuItemSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Primary content in *SubMenuItem → Primary*
+ */
+export interface SubMenuItemSliceWithIconPrimary {
+  /**
+   * Link field in *SubMenuItem → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: sub_menu_item.primary.link
+   * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+   */
+  link: prismic.LinkField;
+
+  /**
+   * Label field in *SubMenuItem → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: sub_menu_item.primary.label
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  label: prismic.KeyTextField;
+
+  /**
+   * Icon field in *SubMenuItem → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: sub_menu_item.primary.icon
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  icon: prismic.ImageField<never>;
+}
+
+/**
+ * WithIcon variation for SubMenuItem Slice
+ *
+ * - **API ID**: `withIcon`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type SubMenuItemSliceWithIcon = prismic.SharedSliceVariation<
+  "withIcon",
+  Simplify<SubMenuItemSliceWithIconPrimary>,
+  never
+>;
+
+/**
+ * Primary content in *SubMenuItem → Primary*
+ */
+export interface SubMenuItemSliceButtonPrimary {
+  /**
+   * Link field in *SubMenuItem → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: sub_menu_item.primary.link
+   * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+   */
+  link: prismic.LinkField;
+
+  /**
+   * Label field in *SubMenuItem → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: sub_menu_item.primary.label
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  label: prismic.KeyTextField;
+}
+
+/**
+ * Button variation for SubMenuItem Slice
+ *
+ * - **API ID**: `button`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type SubMenuItemSliceButton = prismic.SharedSliceVariation<
+  "button",
+  Simplify<SubMenuItemSliceButtonPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *SubMenuItem*
+ */
+type SubMenuItemSliceVariation =
+  | SubMenuItemSliceDefault
+  | SubMenuItemSliceWithIcon
+  | SubMenuItemSliceButton;
+
+/**
+ * SubMenuItem Shared Slice
+ *
+ * - **API ID**: `sub_menu_item`
+ * - **Description**: SubMenuItem
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type SubMenuItemSlice = prismic.SharedSlice<
+  "sub_menu_item",
+  SubMenuItemSliceVariation
+>;
+
 declare module "@prismicio/client" {
   interface CreateClient {
     (
@@ -199,15 +564,39 @@ declare module "@prismicio/client" {
       GlobalNavDocument,
       GlobalNavDocumentData,
       GlobalNavDocumentDataSlicesSlice,
+      LayoutDocument,
+      LayoutDocumentData,
+      LayoutDocumentDataSlicesSlice,
       NavChildItemDocument,
       NavChildItemDocumentData,
       NavChildItemDocumentDataSlicesSlice,
+      SubMenuDocument,
+      SubMenuDocumentData,
+      SubMenuDocumentDataSlicesSlice,
       AllDocumentTypes,
+      HeadingSlice,
+      HeadingSliceDefaultPrimary,
+      HeadingSliceVariation,
+      HeadingSliceDefault,
+      MenuItemSlice,
+      MenuItemSliceDefaultPrimary,
+      MenuItemSliceWithSubMenuPrimary,
+      MenuItemSliceVariation,
+      MenuItemSliceDefault,
+      MenuItemSliceWithSubMenu,
       NavigationItemSlice,
       NavigationItemSliceDefaultPrimary,
       NavigationItemSliceDefaultItem,
       NavigationItemSliceVariation,
       NavigationItemSliceDefault,
+      SubMenuItemSlice,
+      SubMenuItemSliceDefaultPrimary,
+      SubMenuItemSliceWithIconPrimary,
+      SubMenuItemSliceButtonPrimary,
+      SubMenuItemSliceVariation,
+      SubMenuItemSliceDefault,
+      SubMenuItemSliceWithIcon,
+      SubMenuItemSliceButton,
     };
   }
 }

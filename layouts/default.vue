@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<GlobalNav />
+		<GlobalTest />
+		<!-- <GlobalNav /> -->
 		<NuxtPage />
 	</div>
 </template>

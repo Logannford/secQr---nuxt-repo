@@ -127,7 +127,7 @@ const handleMouseLeave = () => {
 };
 
 onMounted(() => {
-  console.log(nav.value);
+  //console.log(nav.value);
   //console.log(nav.value?.results[0].data.slices);
 });
 </script>

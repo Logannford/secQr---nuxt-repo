@@ -1,0 +1,30 @@
+{
+  "id": "layout",
+  "label": "Layout",
+  "format": "custom",
+  "repeatable": false,
+  "status": true,
+  "json": {
+    "Header": {
+      "dashboard_cta_label": {
+        "type": "Text",
+        "config": {
+          "label": "Dashboard CTA label",
+          "placeholder": ""
+        }
+      },
+      "slices": {
+        "type": "Slices",
+        "fieldset": "Slice Zone",
+        "config": {
+          "choices": {
+            "menu_item": {
+              "type": "SharedSlice"
+            }
+          }
+        }
+      }
+    },
+    "Footer": {}
+  }
+}
