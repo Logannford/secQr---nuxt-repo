@@ -50,10 +50,8 @@ const { data: nav } = useAsyncData<any>(() =>
   client.getByType("layout", {
     graphQuery: `
         {
-            data {
-                slices {
-                    sub_menu
-                }
+            layout {
+                ...layoutFields
             }
         }
     `,
@@ -78,7 +76,8 @@ const handleMouseOver = (itemIndex: number) => {
 
 const handleMouseLeave = () => {
   isMouseOver.value = false;
-  if (!isMouseOver.value && active.value) active.value = false;
+  if (!isMouseOver.value && active.value) 
+    active.value = false;
 };
 
 onMounted(() => {
