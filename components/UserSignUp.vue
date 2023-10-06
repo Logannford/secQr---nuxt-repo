@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-screen flex flex-col justify-center items-center">
+  <div class="w-full h-screen flex flex-col justify-center items-center bg-dark-black">
     <form
       @submit.prevent="handleRegistration()"
       class="flex flex-col gap-y-6 w-56 justify-center items-center text-white"
@@ -47,7 +47,6 @@
 </template>
 
 <script setup lang="ts">
-import { getAuth } from "firebase/auth"
 import { storeToRefs } from "pinia";
 import { useUserStore } from "~/stores/userStore";
 

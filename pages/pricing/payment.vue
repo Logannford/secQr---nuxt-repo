@@ -9,7 +9,7 @@
             </h1>
           </div>
           <!-- put these into an object, v-for it to prevent this mess -->
-          <div class="border border-gray-300 rounded px-3">
+          <div class="border border-gray-300 rounded px-3 text-black">
             <!-- account email -->
               <div 
                 v-for="(value, key, index) in paymentDetails"
@@ -49,7 +49,7 @@
             <div class="w-full flex justify-between">
               <div>
                 <UIcon name="i-octicon-chevron-left-24" class="w-5 h-5 block"/> 
-                <NuxtLink to="/pricing" class="flex gap-x-2"> 
+                <NuxtLink to="/pricing" class="flex gap-x-2 text-black"> 
                   <span>
                     Back to Information
                   </span>

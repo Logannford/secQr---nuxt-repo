@@ -20,7 +20,7 @@
       <div v-if="cardProps.mostPopular" class="w-full h-[5%] bg-light-purple text-white">
         Most popular
       </div>
-      <div class="container inside-container flex flex-col items-center text-center h-full">
+      <div class="p-8 inside-container flex flex-col items-center text-center h-full">
         <div class="rounded w-14 h-14">
           <TestQr />
         </div>
