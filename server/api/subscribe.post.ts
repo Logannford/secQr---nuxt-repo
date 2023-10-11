@@ -1,8 +1,9 @@
 import Stripe from 'stripe';
-import { StripeResponse } from '~/types/StripeResponse';
+import {StripeResponse} from '~/types/StripeResponse';
+import {RuntimeConfig} from "nuxt/schema";
 
 export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig();
+  const config: RuntimeConfig = useRuntimeConfig();
 
   // params that come from the front end (request body)
   const params = await readBody(event);
@@ -40,10 +41,9 @@ export default defineEventHandler(async (event) => {
   const createNewCustomer = async (customerParams: Stripe.CustomerCreateParams): Promise<Stripe.Customer> => {
     try{
       // create a new customer
-      const customer: Stripe.Customer = await stripe.customers.create(
-        customerParams
+      return await stripe.customers.create(
+          customerParams
       );
-      return customer;
     }
     catch(error: any){
       throw createError({
@@ -101,7 +101,7 @@ export default defineEventHandler(async (event) => {
         quantity: 1
       });
 
-      const finalizedInvoice = await stripe.invoices.finalizeInvoice(
+      const finalizedInvoice: Stripe.Response<Stripe.Invoice> = await stripe.invoices.finalizeInvoice(
         invoice.id,
         {
           auto_advance: true
@@ -115,7 +115,7 @@ export default defineEventHandler(async (event) => {
           statusCode: 500,
           message: 'Failed to finalize invoice'
         })
-      };
+      }
 
       let paymentIntent: Stripe.PaymentIntent | null;
 
@@ -159,18 +159,18 @@ export default defineEventHandler(async (event) => {
 
   const createSubscription = async(): Promise<StripeResponse | null> => {
 
-    console.log(params)
+    console.log(params);
 
     // if the params do not contain a customer email, we need to cancel the flow
     const userEmail = params?.customerEmail;  
     const planType = params?.planType
 
-    // if(!userEmail || !planType){
-    //   throw createError({
-    //     statusCode: 400,
-    //     message: 'Missing customer email OR plan type'
-    //   })
-    // }
+    if(!userEmail || !planType){
+       throw createError({
+         statusCode: 400,
+         message: 'Missing customer email OR plan type'
+       })
+    }
 
     const planTypes = [
       {
@@ -189,12 +189,22 @@ export default defineEventHandler(async (event) => {
 
     // first we will check if the user already exists in stripe
     let currentUser: Stripe.Customer | Boolean | null = null;
-    const currentPlanType = planTypes.find((plan) => plan.name === planType);
+    const currentPlanType: {
+      price: number;
+      name: string
+    } | undefined
+        = planTypes.find(
+            (plan:
+                 { name: string,
+                   price: number
+                 }
+            ): boolean => plan.name === planType
+        );
 
     // see if we already have the customer
     currentUser = await findCustomer(userEmail);
 
-    // if the response if false, we need to create a new customer
+    // if the response is false, we need to create a new customer
     // create the new customer 
     if(!currentUser) {
       const newCustomerParams: Stripe.CustomerCreateParams = {
@@ -229,6 +239,5 @@ export default defineEventHandler(async (event) => {
       paymentEmail: userEmail
     };
   }
-
   return await createSubscription();
 });

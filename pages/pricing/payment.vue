@@ -173,7 +173,7 @@ onMounted(async () => {
       });
     }
 
-    const { invoice, paymentEmail, paymentPrice } = await stripeResponse?.data?.value;
+    const { invoice, paymentEmail, paymentPrice } = stripeResponse?.data?.value;
 
     paymentIntentClientSecret.value = invoice;
     paymentDetails.Price = (paymentPrice / 100);
