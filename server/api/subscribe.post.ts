@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   const params = await readBody(event);
   
   //create a new stripe instance
-  const stripe = new Stripe(config.private.stripeSecretKey, {
+  const stripe: Stripe = new Stripe(config.private.stripeSecretKey, {
     apiVersion: '2023-08-16',
   });
 
@@ -72,7 +72,7 @@ export default defineEventHandler(async (event) => {
         statusCode: 400,
         message: 'Missing payment intent AND / OR user'
       })
-    };
+    }
 
     // try to create the invoice
     try {
@@ -100,15 +100,13 @@ export default defineEventHandler(async (event) => {
         currency: 'gbp',
         quantity: 1
       });
-
       const finalizedInvoice: Stripe.Response<Stripe.Invoice> = await stripe.invoices.finalizeInvoice(
-        invoice.id,
-        {
-          auto_advance: true
-        }
-      );
-
-      const paymentIntentId = finalizedInvoice?.payment_intent;
+          invoice.id,
+          {
+            auto_advance: true
+          }
+      ), paymentIntentId
+          = finalizedInvoice?.payment_intent;
 
       if(!paymentIntentId){
         throw createError({
@@ -121,8 +119,8 @@ export default defineEventHandler(async (event) => {
 
       // if the payment intent is a string, we need to update it
       if(typeof paymentIntentId === 'string'){
-        paymentIntent = await stripe. paymentIntents.retrieve(
-          paymentIntentId
+        await stripe.paymentIntents.retrieve(
+            paymentIntentId
         );
       }
 
@@ -172,7 +170,10 @@ export default defineEventHandler(async (event) => {
        })
     }
 
-    const planTypes = [
+    const planTypes: {
+      price: number;
+      name: string
+    }[] = [
       {
         name: 'single',
         price: 199
@@ -188,14 +189,15 @@ export default defineEventHandler(async (event) => {
     ];
 
     // first we will check if the user already exists in stripe
-    let currentUser: Stripe.Customer | Boolean | null = null;
+    let currentUser: Stripe.Customer | Boolean;
     const currentPlanType: {
       price: number;
       name: string
     } | undefined
         = planTypes.find(
             (plan:
-                 { name: string,
+                 {
+                   name: string,
                    price: number
                  }
             ): boolean => plan.name === planType
@@ -225,7 +227,7 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    const invoice = await createAnInvoice(
+    const invoice: string | null = await createAnInvoice(
       currentUser as Stripe.Customer,
       currentPlanType?.price as number
     );

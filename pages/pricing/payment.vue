@@ -32,7 +32,7 @@
           <!-- payment form -->
           <form
             class="w-full flex flex-col gap-y-10 h-full place-content-center"
-            onsubmit="event.preventDefault()"
+            onsubmit="preventDefault()"
             @submit="handlePayment()"
           >
             <span class="text-black">
@@ -161,15 +161,11 @@ onMounted(async () => {
     console.log(stripeResponse?.data?.value);
 
     if (!stripeResponse?.data?.value) {
-      router.push({
+      return await router.push({
         path: "/pricing",
         query: {
           error: "true",
         },
-      });
-      throw createError({
-        statusCode: 400,
-        message: "Error creating stripe payment",
       });
     }
 
@@ -215,7 +211,6 @@ const handlePayment = async (): Promise<Error | void> => {
     elements: stripeElements.value,
     confirmParams: {
       return_url: `${window.location.origin}/pricing/payment-success`,
-      receipt_email: currentUserEmail.value,
     },
   });
 
