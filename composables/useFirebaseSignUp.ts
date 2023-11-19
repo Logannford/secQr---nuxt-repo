@@ -1,6 +1,6 @@
 import {createUserWithEmailAndPassword, User, getAuth, Auth} from "firebase/auth";
 import { collection, addDoc, getFirestore } from "firebase/firestore";
-import {firestore} from "firebase-admin";
+import { firestore } from "firebase-admin";
 import Firestore = firestore.Firestore;
 
 export const useFirebaseSignUp = async (email: string, password: string): Promise<boolean | string> => {
