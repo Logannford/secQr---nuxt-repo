@@ -1,9 +1,11 @@
-import { createUserWithEmailAndPassword, User, getAuth } from "firebase/auth";
-import { collection, addDoc, getFirestore } from "firebase/firestore"; 
+import {createUserWithEmailAndPassword, User, getAuth, Auth} from "firebase/auth";
+import { collection, addDoc, getFirestore } from "firebase/firestore";
+import { firestore } from "firebase-admin";
+import Firestore = firestore.Firestore;
 
 export const useFirebaseSignUp = async (email: string, password: string): Promise<boolean | string> => {
-  const user = useState<User | null>("fb_user", () => null);
-  const auth = getAuth();
+  const user = useState<User | null>("fb_user", (): null => null);
+  const auth: Auth = getAuth();
   const db = getFirestore();
   try {
     const userCredentials = await createUserWithEmailAndPassword(

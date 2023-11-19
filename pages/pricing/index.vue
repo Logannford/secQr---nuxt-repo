@@ -52,7 +52,7 @@ interface ItemOptions {
   name: string;
   planType: string;
   price: number;
-  shortDescription?: string;
+  shortDescription: string;
   bulletPoints: string[];
   mostPopular?: boolean;
 }
@@ -63,35 +63,23 @@ const itemOptions: ItemOptions[] = [
     planType: "single",
     price: 199,
     shortDescription: "1 Time Purchase",
-    // bulletPoints: [
-    //   "Allows for 1 Address QR code to be generated.",
-    //   "Unlimited uses.",
-    //   "Can only be used to generate home address - not custom information."
-    // ],
     bulletPoints: [
-      "test bullet point 1",
-      "test bullet point 2",
-      "test bullet point 3",
-      "test bullet point 4"
-    ]
+       "Allows for 1 Address QR code to be generated.",
+       "Unlimited uses.",
+       "Can only be used to generate home address - not custom information."
+    ],
   },
   {
     name: "Monthly ",
     planType: "monthly",
     price: 499,
     shortDescription: "Monthly Subscription with unlimited QR code generation",
-    // bulletPoints: [
-    //   "ALL single time purchase features.",
-    //   "Allows for multiple Address QR codes to be generated.",
-    //   "Can be used unlimited times.",
-    //   "Can track all orders from the dashboard for the month.",
-    //   "Can generate QR codes with custom information."
-    // ],,
     bulletPoints: [
-      "test bullet point 1",
-      "test bullet point 2",
-      "test bullet point 3",
-      "test bullet point 4"
+       "ALL single time purchase features.",
+       "Allows for multiple Address QR codes to be generated.",
+       "Can be used unlimited times.",
+       "Can track all orders from the dashboard for the month.",
+       "Can generate QR codes with custom information."
     ],
     mostPopular: true
   },
@@ -100,18 +88,12 @@ const itemOptions: ItemOptions[] = [
     planType: "yearly",
     price: 699,
     shortDescription: "Yearly Subscription with unlimited QR code generation",
-    // bulletPoints: [
-    //   "ALL single time purchase and monthly subscription features",
-    //   "Allows for multiple Address QR codes to be generated.",
-    //   "Can be used Unlimited times.",
-    //   "A detailed breakdown on all orders for the year."
-    // ],
     bulletPoints: [
-      "test bullet point 1",
-      "test bullet point 2",
-      "test bullet point 3",
-      "test bullet point 4"
-    ]
+      "ALL single time purchase and monthly subscription features",
+      "Allows for multiple Address QR codes to be generated.",
+      "Can be used Unlimited times.",
+      "A detailed breakdown on all orders for the year."
+    ],
   },
 ];
 
