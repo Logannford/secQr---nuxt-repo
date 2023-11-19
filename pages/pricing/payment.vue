@@ -32,7 +32,6 @@
           <!-- payment form -->
           <form
             class="w-full flex flex-col gap-y-10 h-full place-content-center"
-            onsubmit="preventDefault()"
             @submit="handlePayment()"
           >
             <span class="text-black">
@@ -101,7 +100,7 @@
 import { loadStripe } from "@stripe/stripe-js";
 import { useUserStore } from "~/stores/userStore";
 import { storeToRefs } from "pinia";
-import { StripeResponse } from "~/types/StripeResponse";
+//import { StripeResponse } from "~/types/StripeResponse";
 
 const stripe = await loadStripe(useRuntimeConfig().public.stripePublicKey);
 const router = useRouter();
@@ -150,7 +149,7 @@ onMounted(async () => {
   console.log(currentUserEmail.value);
 
   try {
-    const stripeResponse = await useFetch<StripeResponse>("/api/subscribe", {
+    const stripeResponse = await useFetch("/api/subscribe", {
       method: "POST",
       body: {
         customerEmail: currentUserEmail,
@@ -206,6 +205,7 @@ onMounted(async () => {
 });
 
 const handlePayment = async (): Promise<Error | void> => {
+  console.log('ran');
   paymentLoading.value = true;
   await stripe?.confirmPayment({
     elements: stripeElements.value,
