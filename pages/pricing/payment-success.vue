@@ -1,21 +1,56 @@
 <template>
-    <div class="text-black">
-        PAYMENT SUCCESS
-    </div>
-
-    <!-- MATCH /DATABASES/{DATABASE}/DOCUMENTS {
-
-    // THIS RULE ALLOWS ANYONE WITH YOUR FIRESTORE DATABASE REFERENCE TO VIEW, EDIT,
-    // AND DELETE ALL DATA IN YOUR FIRESTORE DATABASE. IT IS USEFUL FOR GETTING
-    // STARTED, BUT IT IS CONFIGURED TO EXPIRE AFTER 30 DAYS BECAUSE IT
-    // LEAVES YOUR APP OPEN TO ATTACKERS. AT THAT TIME, ALL CLIENT
-    // REQUESTS TO YOUR FIRESTORE DATABASE WILL BE DENIED.
-    //
-    // MAKE SURE TO WRITE SECURITY RULES FOR YOUR APP BEFORE THAT TIME, OR ELSE
-    // ALL CLIENT REQUESTS TO YOUR FIRESTORE DATABASE WILL BE DENIED UNTIL YOU UPDATE
-    // YOUR RULES
-    MATCH /{DOCUMENT=**} {
-      ALLOW READ, WRITE: IF REQUEST.TIME < TIMESTAMP.DATE(2023, 9, 23);
-    }
-  },-->
+  <div class="text-black">
+    {{ currentUser }}
+  </div>
 </template>
+
+<script setup lang="ts">
+import { useUserStore } from "~/stores/userStore";
+import { storeToRefs } from 'pinia';
+import { setDoc, doc, getFirestore, updateDoc } from "firebase/firestore";
+import type { FirebaseDatabaseUser } from '~/types/FirestoreUser';
+import { initializeApp, getApps } from "firebase/app";
+
+
+const userStore = useUserStore();
+const { currentUser } = storeToRefs(userStore);
+const db = ref();
+
+const updateFirestoreDbWith = async(): Promise<void> => {
+  if(getApps().length)
+    db.value = getFirestore();
+  // get the current user
+  const user = currentUser?.value;
+
+  // we need the user / user id in order to update data in the doc
+  if(!user || !user.uid)
+    return;
+
+  //needs to be typed 
+  const transactionData: FirebaseDatabaseUser['subscription'] = {
+    paymentEmail: user?.email as string,
+    planType: '',
+    subscriptionActive: true,
+    dateOfPurchase: new Date().toISOString(),
+  }
+
+  // try catch to update the users creds
+  try{
+    const docRef = doc(db.value, 'users', user.uid);
+    await updateDoc(docRef, { 
+      'subscription': transactionData
+    })
+  }
+  catch(error){
+    throw createError({
+      statusCode: 400,
+      message: 'Error updating user credentials',
+    });
+  }
+}
+
+onMounted(async() => {
+  // run a function to update the user's credentials in the firestore db
+  await updateFirestoreDbWith()
+})
+</script>

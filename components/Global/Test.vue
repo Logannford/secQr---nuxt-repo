@@ -81,7 +81,7 @@ const handleMouseLeave = () => {
 };
 
 onMounted(() => {
-  console.log(nav.value.results);
+  //console.log(nav.value.results);
 });
 
 /*

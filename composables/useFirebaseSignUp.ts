@@ -1,7 +1,6 @@
-import {createUserWithEmailAndPassword, User, getAuth, Auth} from "firebase/auth";
-import { collection, addDoc, getFirestore } from "firebase/firestore";
-import { firestore } from "firebase-admin";
-//import Firestore = firestore.Firestore;
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import type { User, Auth } from "firebase/auth";
+import { doc, setDoc, getFirestore } from "firebase/firestore";
 
 export const useFirebaseSignUp = async (email: string, password: string): Promise<boolean | string> => {
   const user = useState<User | null>("fb_user", (): null => null);
@@ -13,15 +12,22 @@ export const useFirebaseSignUp = async (email: string, password: string): Promis
       email,
       password
     );
-    if (userCredentials) {
-      console.log("user created");
+    if (userCredentials && userCredentials.user.uid) {
       user.value = userCredentials.user;
-
       //now the user is created, we can add the user to the database
       try {
-        await addDoc(collection(db, "users"), {
-          email: email
-        })
+        await setDoc(
+          doc(
+            db, 
+            "users",
+            user?.value?.uid
+          ), {
+            email: email,
+            subscription: {
+              active: false
+            }
+          }
+        )
       } catch(error: unknown){
         console.error(error);
       }

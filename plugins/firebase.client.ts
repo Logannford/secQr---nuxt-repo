@@ -7,17 +7,17 @@ export default defineNuxtPlugin(nuxtApp => {
   // TODO: Add SDKs for Firebase products that you want to use
   // https://firebase.google.com/docs/web/setup#available-libraries
 
-  const config = useRuntimeConfig();
+  const { public: config } = useRuntimeConfig();
 
   // Your web app's Firebase configuration
   const firebaseConfig = {
-    apiKey: config.public.firebaseApiKey,
-    authDomain: config.public.firebaseAuthDomain,
-    databaseURL: config.public.firebaseDatabaseURL,
-    projectId: config.public.firebaseProjectId,
-    storageBucket: config.public.firebaseStorageBucket,
-    messagingSenderId: config.public.firebaseMessagingSenderId,
-    appId: config.public.firebaseAppId
+    apiKey: config.firebaseApiKey,
+    authDomain: config.firebaseAuthDomain,
+    databaseURL: config.firebaseDatabaseURL,
+    projectId: config.firebaseProjectId,
+    storageBucket: config.firebaseStorageBucket,
+    messagingSenderId: config.firebaseMessagingSenderId,
+    appId: config.firebaseAppId
   };
 
   // Initialize Firebase
@@ -32,6 +32,7 @@ export default defineNuxtPlugin(nuxtApp => {
     provide: {
       firebaseApp,
       firebaseAuth,
+      db
     },
   }
 });

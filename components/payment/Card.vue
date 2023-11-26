@@ -85,18 +85,21 @@ const loading = ref<boolean>(false);
 
 const { currentUser } = storeToRefs(userStore);
 
-const currentUserSignedIn = currentUser?.value?.email;
+const currentUserSignedIn = ref<any>(currentUser?.value?.email);
 
 const userStripeDetails = async (): Promise<void | Error> => {
   loading.value = true;
 
+  if(!currentUserSignedIn){
+    currentUserSignedIn.value = currentUser?.value?.email;
+  }
   // force at least a second delay for loading
   await new Promise((res) => setTimeout(res, 1000));
 
     route.push({
       path: `/pricing/payment`,
       query: {
-        customerEmail: currentUserSignedIn,
+        customerEmail: currentUserSignedIn.value,
         planType: cardProps.planType,
       },
     }); 

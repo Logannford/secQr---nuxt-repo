@@ -48,7 +48,7 @@ const currentUserSignedIn = currentUser?.value?.email;
 
 const errorOccurred = ref<boolean>(false);
 
-interface ItemOptions {
+type ItemOptions = {
   name: string;
   planType: string;
   price: number;
