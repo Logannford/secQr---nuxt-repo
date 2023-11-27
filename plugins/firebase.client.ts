@@ -1,4 +1,4 @@
-import { initializeApp, getApps } from "firebase/app";
+import { initializeApp, getApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
@@ -21,18 +21,21 @@ export default defineNuxtPlugin(nuxtApp => {
   };
 
   // Initialize Firebase
-  const apps = getApps();
-  const firebaseApp = !apps.length ? initializeApp(firebaseConfig) : apps[0];
-  const firebaseAuth = getAuth(firebaseApp);
-  const db = getFirestore(initializeApp(firebaseConfig));
+  // const apps = getApps();
+  // const firebaseApp = !apps.length ? initializeApp(firebaseConfig) : apps[0];
+  // const firebaseAuth = getAuth(firebaseApp);
+  // const db = getFirestore(initializeApp(firebaseConfig));
 
-  useFirebaseUser();
+  // useFirebaseUser();
 
-  return {
-    provide: {
-      firebaseApp,
-      firebaseAuth,
-      db
-    },
-  }
+  // return {
+  //   provide: {
+  //     firebaseApp,
+  //     firebaseAuth,
+  //     db
+  //   },
+  // }
+  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+
+  //return getFirestore(app);
 });

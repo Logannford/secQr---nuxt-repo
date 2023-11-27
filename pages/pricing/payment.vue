@@ -107,7 +107,6 @@ import type { StripeResponse } from '~/types/StripeResponse';
 
 const stripe = await loadStripe(useRuntimeConfig().public.stripePublicKey);
 const router = useRouter();
-const db = getFirestore();
 
 const loading = ref<boolean>(false);
 const paymentLoading = ref<boolean>(false);
@@ -161,7 +160,7 @@ onMounted(async () => {
     });
   
   try {
-    const stripeResponse = await useFetch<StripeResponse>('/api/subscribe', {
+    const stripeResponse = await useFetch<StripeResponse>('/api/stripe/subscribe', {
       method: "POST",
       body: {
         customerEmail: currentUserEmail.value,

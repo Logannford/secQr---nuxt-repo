@@ -36,7 +36,9 @@ watch(
   }
 )
  
-onMounted(() => {
+// need to create an 'init' method for auth on page mount
+onMounted(async() => {
+  await useFirebaseAuth();
   console.log(currentUser.value?.email);
   console.log("mounted")
 })

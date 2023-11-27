@@ -3,6 +3,7 @@ export type FirebaseDatabaseUser = {
     uid?: string;
     subscription?: {
       paymentEmail: string;
+      transactionId: string;
       planType: string | number;
       subscriptionActive: boolean;
       dateOfPurchase: string;

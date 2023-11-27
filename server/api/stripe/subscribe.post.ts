@@ -230,7 +230,7 @@ export default defineEventHandler(async (event) => {
       currentPlanType?.price as number
     );
     
-    if(!invoice )
+    if(!invoice)
       return null;
 
     return {
