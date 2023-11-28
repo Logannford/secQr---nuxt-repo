@@ -11,7 +11,6 @@ export const useUserStore = defineStore('userStore', () => {
   
   // we have to do this on mounted so we don't get SSR errors
   onMounted(() => {
-    console.log('ran')
     const auth = getAuth()
     // Listen for authentication state changes
     onAuthStateChanged(auth, async(user: User | null) => {

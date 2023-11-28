@@ -7,11 +7,11 @@ import { useUserStore } from '~/stores/userStore';
  * 
  * @returns Promise void
  */
-export const useFirebaseAuth = async(): Promise<void> => {
+export const useFirebaseAuth = (): Promise<void> => {
     const userStore = useUserStore();
     const { userAuthState } = storeToRefs(userStore);
     // this is waiting until we are either 'authed' or 'not-authed
-    return await new Promise<void>((resolve) => {
+    return new Promise<void>((resolve) => {
         const unwatch = watch(userAuthState, (newState) => {
             if (newState === 'authed' || newState === 'not-authed') {
                 unwatch();

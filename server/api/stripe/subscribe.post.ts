@@ -229,17 +229,16 @@ export default defineEventHandler(async (event) => {
       currentUser as Stripe.Customer,
       currentPlanType?.price as number
     );
+
+    console.log(invoice);
     
-    if(!invoice)
+    if(!invoice || !currentPlanType?.price)
       return null;
 
     return {
       invoice,
-      paymentPrice: currentPlanType?.price as number,
-      paymentEmail: userEmail
+      paymentPrice: currentPlanType?.price
     };
   }
-  const test = await createSubscription();
-  console.log(test)
-  return test;
+  return await createSubscription();
 });

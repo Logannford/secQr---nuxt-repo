@@ -102,7 +102,6 @@
 import { loadStripe } from '@stripe/stripe-js';
 import { useUserStore } from '~/stores/userStore';
 import { storeToRefs } from 'pinia';
-import { doc, getFirestore, setDoc, updateDoc } from 'firebase/firestore';
 import type { StripeResponse } from '~/types/StripeResponse';
 
 const stripe = await loadStripe(useRuntimeConfig().public.stripePublicKey);
@@ -177,11 +176,11 @@ onMounted(async () => {
       });
     }
 
-    const { invoice, paymentEmail, paymentPrice } = stripeResponse?.data?.value;
+    const { invoice, paymentPrice } = stripeResponse?.data?.value;
 
     paymentIntentClientSecret.value = invoice;
     paymentDetails.Price = (paymentPrice / 100);
-    paymentDetails.Email = paymentEmail;
+    paymentDetails.Email = currentUserEmail.value;
 
     try {
       if (!stripe) 
@@ -231,6 +230,5 @@ const handlePayment = async (): Promise<void> => {
     });
   }
   paymentLoading.value = false; 
-
 }
 </script>

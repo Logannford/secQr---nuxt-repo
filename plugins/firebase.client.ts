@@ -1,6 +1,4 @@
 import { initializeApp, getApp, getApps } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
 
 export default defineNuxtPlugin(nuxtApp => {
   // Import the functions you need from the SDKs you need
@@ -20,22 +18,9 @@ export default defineNuxtPlugin(nuxtApp => {
     appId: config.firebaseAppId
   };
 
-  // Initialize Firebase
-  // const apps = getApps();
-  // const firebaseApp = !apps.length ? initializeApp(firebaseConfig) : apps[0];
-  // const firebaseAuth = getAuth(firebaseApp);
-  // const db = getFirestore(initializeApp(firebaseConfig));
-
-  // useFirebaseUser();
-
-  // return {
-  //   provide: {
-  //     firebaseApp,
-  //     firebaseAuth,
-  //     db
-  //   },
-  // }
-  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-
-  //return getFirestore(app);
+  // Return a new instance of the firebase app or the cached instance
+	nuxtApp.provide(
+		'firebaseClientApp', 
+		getApps().length ? getApp() : initializeApp(firebaseConfig)
+	);
 });

@@ -20,19 +20,7 @@ const db = ref();
 const updateFirestoreDbWith = async(): Promise<void> => {
   if(getApps().length)
     db.value = getFirestore();
-  // get the current user
 
-  // this is waiting until we are either 'authed' or 'not-authed
-  // await new Promise<void>((resolve) => {
-  //   const unwatch = watch(userAuthState, (newState) => {
-  //     if (newState === 'authed' || newState === 'not-authed') {
-  //       unwatch(); // Stop watching once the desired state is reached
-  //       resolve();
-  //     }
-  //   });
-  // });
-
-  // we need the user / user id in order to update data in the doc
   console.log(currentUser.value)
 
   if(!currentUser.value?.uid || !currentUser.value?.email)
@@ -66,6 +54,9 @@ const updateFirestoreDbWith = async(): Promise<void> => {
 }
 
 onMounted(async() => {
+  await useFetch("/api/test", { method: "GET" });
+  console.log("mounted");
+
   //await fetchFirebaseUser();
   await useFirebaseAuth();
   // run a function to update the user's credentials in the firestore db
