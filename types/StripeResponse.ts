@@ -1,5 +1,4 @@
-export interface StripeResponse {
-  paymentEmail: string;
+export type StripeResponse = {
   paymentPrice: number;
   invoice: string;
 }

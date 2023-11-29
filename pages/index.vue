@@ -1,7 +1,6 @@
 <template>
-	<div class="text-white">
-		Index page
-		{{ useRuntimeConfig().private.stripeSecretKey }}
+	<div class="text-black">
+		index page
 	</div>
 </template>
 

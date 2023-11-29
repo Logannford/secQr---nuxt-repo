@@ -1,6 +1,6 @@
 import Stripe from 'stripe';
-import {StripeResponse} from '~/types/StripeResponse';
-import {RuntimeConfig} from "nuxt/schema";
+import type { StripeResponse } from '~/types/StripeResponse';
+import type { RuntimeConfig } from "nuxt/schema";
 
 export default defineEventHandler(async (event) => {
   const config: RuntimeConfig = useRuntimeConfig();
@@ -156,14 +156,12 @@ export default defineEventHandler(async (event) => {
   //              MAIN FLOW
 
   const createSubscription = async(): Promise<StripeResponse | null> => {
-
-    console.log(params);
-
     // if the params do not contain a customer email, we need to cancel the flow
     const userEmail = params?.customerEmail;  
     const planType = params?.planType
 
     if(!userEmail || !planType){
+      console.log('no email or plan type')
        throw createError({
          statusCode: 400,
          message: 'Missing customer email OR plan type'
@@ -231,14 +229,15 @@ export default defineEventHandler(async (event) => {
       currentUser as Stripe.Customer,
       currentPlanType?.price as number
     );
+
+    console.log(invoice);
     
-    if(!invoice )
+    if(!invoice || !currentPlanType?.price)
       return null;
 
     return {
       invoice,
-      paymentPrice: currentPlanType?.price as number,
-      paymentEmail: userEmail
+      paymentPrice: currentPlanType?.price
     };
   }
   return await createSubscription();

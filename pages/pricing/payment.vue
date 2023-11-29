@@ -29,11 +29,12 @@
               </div>
           </div>
 
-          <!-- payment form -->
+          <!-- updateDoc payment form -->
+          <div class="text-black">
+          </div>
           <form
             class="w-full flex flex-col gap-y-10 h-full place-content-center"
-            onsubmit="preventDefault()"
-            @submit="handlePayment()"
+            @submit.prevent="handlePayment()"
           >
             <span class="text-black">
               Payment Details
@@ -74,7 +75,7 @@
             </div>
           </form>
         </div>
-      </div>
+      </div>    
       <div class="text-black bg-white/95 col-span-4">
         <div class="p-5 w-full">
           <div class="flex justify-between items-center">
@@ -98,10 +99,10 @@
 </template>
 
 <script setup lang="ts">
-import { loadStripe } from "@stripe/stripe-js";
-import { useUserStore } from "~/stores/userStore";
-import { storeToRefs } from "pinia";
-import { StripeResponse } from "~/types/StripeResponse";
+import { loadStripe } from '@stripe/stripe-js';
+import { useUserStore } from '~/stores/userStore';
+import { storeToRefs } from 'pinia';
+import type { StripeResponse } from '~/types/StripeResponse';
 
 const stripe = await loadStripe(useRuntimeConfig().public.stripePublicKey);
 const router = useRouter();
@@ -122,14 +123,14 @@ const currentUserEmail = ref<string | undefined | null>();
 const paymentDetails = reactive({
   Email: currentUserEmail.value,
   Price: 0
-})
+});
 
 onMounted(async () => {
   //start loading
   loading.value = true;
 
   currentUserEmail.value = new URLSearchParams(window.location.search).get(
-    "customerEmail"
+    'customerEmail'
   ) as string | undefined;
 
   const planType = new URLSearchParams(window.location.search).get(
@@ -137,46 +138,53 @@ onMounted(async () => {
   ) as string | undefined;
 
   // if there is nothing in the url, check the store
-  if (!currentUserEmail.value)
+  if (!currentUserEmail.value && currentUser?.value?.email){
     currentUserEmail.value = currentUser?.value?.email;
 
+    // once we finally get the email, redirect so the email is in the url
+    router.push({
+      path: '/pricing/payment',
+      query: {
+        customerEmail: currentUserEmail.value,
+        planType: planType
+      },
+    });
+  };
+  
   // if we still do not have the email, throw an error
-  if (!currentUserEmail)
+  if (!currentUserEmail.value)
     throw createError({
       statusCode: 400,
-      message: "Error getting user email",
+      message: 'Error getting user email',
     });
-
-  console.log(currentUserEmail.value);
-
+  
   try {
-    const stripeResponse = await useFetch<StripeResponse>("/api/subscribe", {
+    const stripeResponse = await useFetch<StripeResponse>('/api/stripe/subscribe', {
       method: "POST",
       body: {
-        customerEmail: currentUserEmail,
+        customerEmail: currentUserEmail.value,
         planType: planType
       },
     });
 
-    console.log(stripeResponse?.data?.value);
-
     if (!stripeResponse?.data?.value) {
       return await router.push({
-        path: "/pricing",
+        path: '/pricing',
         query: {
-          error: "true",
+          error: 'true',
         },
       });
     }
 
-    const { invoice, paymentEmail, paymentPrice } = stripeResponse?.data?.value;
+    const { invoice, paymentPrice } = stripeResponse?.data?.value;
 
     paymentIntentClientSecret.value = invoice;
     paymentDetails.Price = (paymentPrice / 100);
-    paymentDetails.Email = paymentEmail;
+    paymentDetails.Email = currentUserEmail.value;
 
     try {
-      if (!stripe) return;
+      if (!stripe) 
+        return;
 
       stripeElements.value = stripe.elements({
         clientSecret: paymentIntentClientSecret.value,
@@ -187,13 +195,13 @@ onMounted(async () => {
     } catch (err) {
       throw createError({
         statusCode: 400,
-        message: "Error creating stripe elements",
+        message: 'Error creating stripe elements',
       });
     }
   } catch (err) {
     throw createError({
       statusCode: 400,
-      message: "Error creating stripe payment",
+      message: 'Error creating stripe payment',
     });
   }
 
@@ -205,15 +213,22 @@ onMounted(async () => {
   paymentElements.mount(stripeElementMount.value);
 });
 
-const handlePayment = async (): Promise<Error | void> => {
+const handlePayment = async (): Promise<void> => {
   paymentLoading.value = true;
-  await stripe?.confirmPayment({
-    elements: stripeElements.value,
-    confirmParams: {
-      return_url: `${window.location.origin}/pricing/payment-success`,
-    },
-  });
-
-  paymentLoading.value = false;
-};
+  try{
+    await stripe?.confirmPayment({
+      elements: stripeElements.value,
+      confirmParams: {
+        return_url: `${window.location.origin}/pricing/payment-success`,
+      },
+    });
+  }
+  catch(err){
+    throw createError({
+      statusCode: 400,
+      message: 'Error confirming payment',
+    });
+  }
+  paymentLoading.value = false; 
+}
 </script>

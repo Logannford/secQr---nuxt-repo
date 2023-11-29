@@ -1,37 +1,26 @@
-import { initializeApp, getApps } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { initializeApp, getApp, getApps } from "firebase/app";
 
 export default defineNuxtPlugin(nuxtApp => {
   // Import the functions you need from the SDKs you need
   // TODO: Add SDKs for Firebase products that you want to use
   // https://firebase.google.com/docs/web/setup#available-libraries
 
-  const config = useRuntimeConfig();
+  const { public: config } = useRuntimeConfig();
 
   // Your web app's Firebase configuration
   const firebaseConfig = {
-    apiKey: config.public.firebaseApiKey,
-    authDomain: config.public.firebaseAuthDomain,
-    databaseURL: config.public.firebaseDatabaseURL,
-    projectId: config.public.firebaseProjectId,
-    storageBucket: config.public.firebaseStorageBucket,
-    messagingSenderId: config.public.firebaseMessagingSenderId,
-    appId: config.public.firebaseAppId
+    apiKey: config.firebaseApiKey,
+    authDomain: config.firebaseAuthDomain,
+    databaseURL: config.firebaseDatabaseURL,
+    projectId: config.firebaseProjectId,
+    storageBucket: config.firebaseStorageBucket,
+    messagingSenderId: config.firebaseMessagingSenderId,
+    appId: config.firebaseAppId
   };
 
-  // Initialize Firebase
-  const apps = getApps();
-  const firebaseApp = !apps.length ? initializeApp(firebaseConfig) : apps[0];
-  const firebaseAuth = getAuth(firebaseApp);
-  const db = getFirestore(initializeApp(firebaseConfig));
-
-  useFirebaseUser();
-
-  return {
-    provide: {
-      firebaseApp,
-      firebaseAuth,
-    },
-  }
+  // Return a new instance of the firebase app or the cached instance
+	nuxtApp.provide(
+		'firebaseClientApp', 
+		getApps().length ? getApp() : initializeApp(firebaseConfig)
+	);
 });
