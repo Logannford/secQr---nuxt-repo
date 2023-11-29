@@ -1,7 +1,6 @@
 <template>
   <div class="text-black">
-    {{ currentUser }}
-    {{ userAuthState }}
+    Payment success
   </div>
 </template>
 
@@ -16,6 +15,7 @@ import type { FirebaseDatabaseUser } from '~/types/FirestoreUser';
 const userStore = useUserStore();
 const { currentUser, userAuthState } = storeToRefs(userStore);
 const db = ref();
+const isOpen = ref<boolean>(false);
 
 const updateFirestoreDbWith = async(): Promise<void> => {
   if(getApps().length)
