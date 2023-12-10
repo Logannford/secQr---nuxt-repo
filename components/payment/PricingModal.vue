@@ -14,15 +14,13 @@
       </div>
 
       <div class="w-full flex justify-between">
-        <div>
-          <UIcon name="i-octicon-chevron-left-24" class="w-5 h-5 block" />
-          <button
-            class="flex gap-x-2 text-black"
-            @click.prevent="$emit('modalState', modalValue)"
-          >
-            <span> Back to Information </span>
-          </button>
-        </div>
+        <UButton
+          class="flex gap-x-2 text-black items-center"
+          @click.prevent="$emit('modalState', modalValue)"
+          icon="i-octicon-chevron-left-24"
+        >
+          Back to Information
+        </UButton>
 
         <button
           class="bg-black rounded-lg text-white px-4 py-2 disabled:opacity-50"
@@ -73,7 +71,7 @@ const paymentDetails = reactive({
 });
 
 const props = defineProps<{
-  paymentPlan: string;
+  paymentPlan: string | null;
 }>();
 
 onMounted(async () => {
@@ -83,24 +81,15 @@ onMounted(async () => {
   // if there is nothing in the url, check the store
   if (!currentUserEmail.value && currentUser?.value?.email) {
     currentUserEmail.value = currentUser?.value?.email;
-
-    // once we finally get the email, redirect so the email is in the url
-    // router.push({
-    //   path: '/pricing/payment',
-    //   query: {
-    //     customerEmail: currentUserEmail.value,
-    //     planType: planType
-    //   },
-    // });
   }
 
   console.log(currentUserEmail.value);
 
   // if we still do not have the email, throw an error
-  if (!currentUserEmail.value)
+  if (!currentUserEmail.value || !props.paymentPlan)
     throw createError({
       statusCode: 400,
-      message: "Error getting user email",
+      message: "Error getting user email AND OR payment plan",
     });
 
   try {

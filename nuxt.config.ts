@@ -57,10 +57,6 @@ export default defineNuxtConfig({
     preference: "dark",
   },
 
-  ui: {
-    icons: "all",
-  },
-
   runtimeConfig: {
     private: {
       stripeSecretKey: "",
@@ -80,6 +76,6 @@ export default defineNuxtConfig({
   },
 
   prismic: {
-    endpoint: "anonaddress",
+    endpoint: "addressable",
   },
 });

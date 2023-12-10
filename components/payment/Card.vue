@@ -61,9 +61,7 @@
               :disabled="loading"
               size="medium"
               intent="primary"
-              @click="
-                $emit('modalValues', { plan: cardProps.planType, open: true })
-              "
+              @click="handleCardClick()"
             >
               {{ loading ? "Loading..." : cardText }}
             </ElementButton>
@@ -75,9 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from "~/stores/userStore";
-import { storeToRefs } from "pinia";
-import type { User } from "firebase/auth";
+import type { AuthStates } from "~/stores/userStore";
 
 const cardProps = defineProps<{
   title: string;
@@ -89,35 +85,34 @@ const cardProps = defineProps<{
   index: number;
 }>();
 
+type modalVales = {
+  plan: string;
+  open: boolean;
+};
+
+const emit = defineEmits<{
+  modalValues: [value: modalVales];
+}>();
+
 //const route = useRouter();
 const loading = ref<boolean>(false);
 const cardText = ref<string>("Start Now");
+const route = useRouter();
 
-const userStore = useUserStore();
-const { currentUser } = storeToRefs(userStore);
+const userAuthState = ref<AuthStates>(await useFirebaseAuth());
 
-const currentUserSignedIn = ref<User | null>(currentUser.value);
+const handleCardClick = () => {
+  if (userAuthState.value !== "authed") {
+    route.push({
+      path: "sign-up",
+    });
+  } else emit("modalValues", { plan: cardProps.planType, open: true });
+};
 
 onMounted(() => {
-  if (!currentUserSignedIn) cardText.value = "Click here to Login or Sign up";
+  console.log(userAuthState.value);
+  if (userAuthState.value !== "authed") {
+    cardText.value = "Login or Sign up";
+  }
 });
-
-// const userStripeDetails = async (): Promise<void | Error> => {
-//   loading.value = true;
-
-//   if(!currentUserSignedIn)
-//     currentUserSignedIn.value = currentUser?.value?.email;
-
-//   // force at least a second delay for loading
-//   await new Promise((res) => setTimeout(res, 1000));
-
-//     route.push({
-//       path: `/pricing/payment`,
-//       query: {
-//         customerEmail: currentUserSignedIn.value,
-//         planType: cardProps.planType,
-//       },
-//     });
-//   loading.value = false;
-// };
 </script>

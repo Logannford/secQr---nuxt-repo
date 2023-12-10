@@ -38,7 +38,7 @@
       }"
     >
       <PaymentPricingModal
-        :paymentPlan="paymentPlan"
+        :paymentPlan="paymentPlan ?? null"
         @modalState="modalState"
       />
     </UModal>
@@ -47,8 +47,6 @@
 
 <script setup lang="ts">
 import { type Content } from "@prismicio/client";
-import { useUserStore } from "~/stores/userStore";
-import { storeToRefs } from "pinia";
 
 // The array passed to `getSliceComponentProps` is purely optional.
 // Consider it as a visual hint for you when templating your slice.
@@ -70,16 +68,15 @@ type ItemOptions = {
   mostPopular?: boolean;
 };
 
-const errorOccurred = ref<boolean>(false);
 const isOpen = ref(false);
 const paymentPlan = ref<string>();
 
-const destruct = ({ plan, open }) => {
+const destruct = ({ plan, open }: { plan: string; open: boolean }) => {
   isOpen.value = open;
   paymentPlan.value = plan;
 };
 
-const modalState = ({ modalState }) => {
+const modalState = (modalState: boolean) => {
   isOpen.value = modalState;
 };
 

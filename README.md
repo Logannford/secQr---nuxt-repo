@@ -3,7 +3,7 @@
 - Nuxt 3
 - Vue 3
 - Typescript
-- Tailwind 3
+- Tailwind
 - Firebase Auth
 - Firebase Firestore
 - Pinia
