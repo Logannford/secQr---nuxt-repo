@@ -5,9 +5,11 @@ import { defineSliceZoneComponents } from "@prismicio/vue";
 
 export const components = defineSliceZoneComponents({
   heading: defineAsyncComponent(() => import("./Heading/index.vue")),
+  hero: defineAsyncComponent(() => import("./Hero/index.vue")),
   menu_item: defineAsyncComponent(() => import("./MenuItem/index.vue")),
   navigation_item: defineAsyncComponent(
-    () => import("./NavigationItem/index.vue")
+    () => import("./NavigationItem/index.vue"),
   ),
+  pricing_cards: defineAsyncComponent(() => import("./PricingCards/index.vue")),
   sub_menu_item: defineAsyncComponent(() => import("./SubMenuItem/index.vue")),
 });

@@ -1,0 +1,31 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"chiptext": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Exercitation tempor minim dolor commodo sint aute veniam mollit id."
+						}
+					}
+				]
+			},
+			"pricing_title": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Nulla consequat irure consectetur dolor pariatur laborum nostrud commodo sunt fugiat officia sunt mollit adipisicing enim."
+						}
+					}
+				]
+			}
+		},
+		"items": []
+	}
+]

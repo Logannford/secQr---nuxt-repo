@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div>
     <div class="grid grid-cols-12 h-screen">
       <div class="bg-white col-span-8 border-r border-light-grey">
         <div class="flex flex-col gap-y-10 p-10">
@@ -29,9 +29,6 @@
               </div>
           </div>
 
-          <!-- updateDoc payment form -->
-          <div class="text-black">
-          </div>
           <form
             class="w-full flex flex-col gap-y-10 h-full place-content-center"
             @submit.prevent="handlePayment()"

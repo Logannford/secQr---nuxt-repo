@@ -12,10 +12,10 @@
             :aria-haspopup="item.variation !== 'default'"
             class="font-bold flex gap-x-2 items-center group"
           >
-            <p>
+            <a :href="item.primary.link?.slug">
               {{ item.primary.label }}
-            </p>
-            <div 
+            </a>
+            <div
               v-if="item.variation !== 'default'"
               class="w-3 h-3 group-hover:rotate-180 duration-300"
             >
@@ -32,31 +32,27 @@
           </li>
         </ul>
       </div>
-      <div class="">
-        <NuxtLink to="/dashboard">
-          <ElementButton size="small" intent="primary">
-            {{ dashboardLabel }}
-          </ElementButton>
-        </NuxtLink>
+      <div class="flex gap-x-4">
+        <UButton v-if="userAuthed" :label="dashboardLabel" to="/dashboard" />
+        <UButton v-if="userAuthed" label="Log Out" />
       </div>
     </div>
   </nav>
 </template>
 
 <script setup lang="ts">
-const { client } = usePrismic();
+import { useUserStore } from "~/stores/userStore";
+import { storeToRefs } from "pinia";
 
-const { data: nav } = useAsyncData<any>(() =>
-  client.getByType("layout", {
-    graphQuery: `
-        {
-            layout {
-                ...layoutFields
-            }
-        }
-    `,
-  })
-);
+const { client } = usePrismic();
+const { data: nav } = useAsyncData<any>(() => client.getByType("layout"));
+
+const userStore = useUserStore();
+const { currentUser } = storeToRefs(userStore);
+
+const userAuthed = computed(() => {
+  return currentUser.value?.email;
+});
 
 const dashboardLabel = computed(() => {
   return nav.value?.results[0]?.data?.dashboard_cta_label;
@@ -76,12 +72,11 @@ const handleMouseOver = (itemIndex: number) => {
 
 const handleMouseLeave = () => {
   isMouseOver.value = false;
-  if (!isMouseOver.value && active.value) 
-    active.value = false;
+  if (!isMouseOver.value && active.value) active.value = false;
 };
 
 onMounted(() => {
-  //console.log(nav.value.results);
+  //console.log(nav.value);
 });
 
 /*

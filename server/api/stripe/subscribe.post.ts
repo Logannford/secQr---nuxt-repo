@@ -156,6 +156,7 @@ export default defineEventHandler(async (event) => {
   //              MAIN FLOW
 
   const createSubscription = async(): Promise<StripeResponse | null> => {
+    console.log(params)
     // if the params do not contain a customer email, we need to cancel the flow
     const userEmail = params?.customerEmail;  
     const planType = params?.planType

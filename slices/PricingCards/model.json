@@ -1,0 +1,37 @@
+{
+  "id": "pricing_cards",
+  "type": "SharedSlice",
+  "name": "PricingCards",
+  "description": "PricingCards",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "chiptext": {
+          "type": "StructuredText",
+          "config": {
+            "label": "ChipText",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "single": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "pricing_title": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Pricing Title",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "single": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}
