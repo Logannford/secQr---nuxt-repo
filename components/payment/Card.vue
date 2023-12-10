@@ -98,8 +98,7 @@ const emit = defineEmits<{
 const loading = ref<boolean>(false);
 const cardText = ref<string>("Start Now");
 const route = useRouter();
-
-const userAuthState = ref<AuthStates>(await useFirebaseAuth());
+const userAuthState = ref<AuthStates>("init");
 
 const handleCardClick = () => {
   if (userAuthState.value !== "authed") {
@@ -109,8 +108,8 @@ const handleCardClick = () => {
   } else emit("modalValues", { plan: cardProps.planType, open: true });
 };
 
-onMounted(() => {
-  console.log(userAuthState.value);
+onMounted(async () => {
+  userAuthState.value = await useFirebaseAuth();
   if (userAuthState.value !== "authed") {
     cardText.value = "Login or Sign up";
   }

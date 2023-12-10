@@ -46,6 +46,10 @@ export default defineNuxtConfig({
   css: ["~/assets/css/main.css"],
   modules: ["@nuxthq/ui", "@pinia/nuxt", "@nuxtjs/prismic"],
 
+  ui: {
+    icons: "all",
+  },
+
   postcss: {
     plugins: {
       tailwindcss: {},
@@ -76,6 +80,6 @@ export default defineNuxtConfig({
   },
 
   prismic: {
-    endpoint: "addressable",
+    endpoint: "anonaddress",
   },
 });
