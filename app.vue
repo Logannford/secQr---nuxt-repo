@@ -3,7 +3,6 @@
 </template>
 
 <script setup lang="ts">
-
 /* 
   because this is a Single page application, onMounted will only run once
   we will need to watch the URL (route.path) to see if it changes when 
@@ -12,35 +11,33 @@
   we will need to watch the route path and the auth state from the store
 */
 
-import { useUserStore } from '~/stores/userStore'
-import { storeToRefs } from 'pinia'
+import { useUserStore } from "~/stores/userStore";
+import { storeToRefs } from "pinia";
 
-const userStore = useUserStore()
+const userStore = useUserStore();
 
-const { currentUser } = storeToRefs(userStore)
-const { resetUser } = userStore
-const route = useRoute()
+const { currentUser } = storeToRefs(userStore);
+const { resetUser } = userStore;
+const route = useRoute();
 
 watch(
   () => route.path,
   async () => {
     // reset the current user if they navigate to the sign up page
-    if(route.path.startsWith("/sign-up")){
-      console.log("sign up page")
-      resetUser()
+    if (route.path.startsWith("/sign-up")) {
+      console.log("sign up page");
+      resetUser();
     }
 
-    if(!currentUser)
-      return
+    if (!currentUser) return;
     console.log(currentUser.value);
   }
-)
- 
+);
+
 // need to create an 'init' method for auth on page mount
-onMounted(async() => {
+onMounted(async () => {
   await useFirebaseAuth();
   console.log(currentUser.value?.email);
-  console.log("mounted")
-})
-
+  console.log("mounted");
+});
 </script>

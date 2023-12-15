@@ -1,7 +1,3 @@
 <template>
-	<div class="text-black">
-		index page
-	</div>
+  <div>home</div>
 </template>
-
-<script setup lang="ts"></script>
