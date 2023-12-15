@@ -44,11 +44,7 @@ export default defineNuxtConfig({
     },
   },
   css: ["~/assets/css/main.css"],
-  modules: ["@nuxthq/ui", "@pinia/nuxt", "@nuxtjs/prismic"],
-
-  ui: {
-    icons: "all",
-  },
+  modules: ["@nuxt/ui", "@pinia/nuxt", "@nuxtjs/prismic"],
 
   postcss: {
     plugins: {

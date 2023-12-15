@@ -4,7 +4,7 @@
       class="w-full flex flex-col gap-y-10 h-full place-content-center p-8"
       @submit.prevent="handlePayment()"
     >
-      <span class="text-black"> Payment Details </span>
+      <span class="text-black text-2xl font-bold"> Payment Details </span>
       <div class="border border-gray-300 p-5 rounded">
         <div v-if="loading" class="text-black w-full flex justify-center">
           <Spinner class="w-5 h-5" />
@@ -15,9 +15,10 @@
 
       <div class="w-full flex justify-between">
         <UButton
-          class="flex gap-x-2 text-black items-center"
+          class="flex gap-x-2 !text-black items-center"
           @click.prevent="$emit('modalState', modalValue)"
-          icon="i-octicon-chevron-left-24"
+          icon="i-heroicons-arrow-left"
+          variant="outline"
         >
           Back to Information
         </UButton>

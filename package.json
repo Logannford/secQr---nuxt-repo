@@ -29,6 +29,7 @@
   "dependencies": {
     "@iconify-json/heroicons": "^1.1.12",
     "@pinia/nuxt": "^0.4.11",
+    "@prismicio/helpers": "^2.3.9",
     "@stripe/stripe-js": "^2.1.1",
     "@vueuse/core": "^10.3.0",
     "class-variance-authority": "^0.7.0",

@@ -1,7 +1,8 @@
 <template>
-	<div>
-		<GlobalTest />
-		<!-- <GlobalNav /> -->
-		<NuxtPage />
-	</div>
+  <div>
+    <GlobalTest />
+    <!-- <GlobalNav /> -->
+    <NuxtPage />
+    <UNotifications />
+  </div>
 </template>

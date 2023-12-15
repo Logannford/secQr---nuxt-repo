@@ -33,8 +33,20 @@
         </ul>
       </div>
       <div class="flex gap-x-4">
-        <UButton v-if="userAuthed" :label="dashboardLabel" to="/dashboard" />
-        <UButton v-if="userAuthed" label="Log Out" />
+        <UButton
+          v-if="userAuthed"
+          :label="dashboardLabel"
+          to="/dashboard"
+          class="!text-black"
+          variant="outline"
+        />
+        <UButton
+          v-if="userAuthed"
+          label="Log Out"
+          class="!text-black"
+          @click="useUserSignOut()"
+          variant="outline"
+        />
       </div>
     </div>
   </nav>

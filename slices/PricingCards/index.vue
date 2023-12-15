@@ -8,7 +8,7 @@
     >
       <div class="flex flex-col items-center gap-y-3 text-black">
         <h6 class="bg-gray-200 px-4 py-2 rounded-xl text-xs text-dark-purple">
-          {{ slice?.primary?.chiptext[0].text }}
+          {{ slice?.primary?.chiptext[0]?.text }}
         </h6>
         <h1 class="text-5xl font-bold text-dark-purple">
           {{ slice?.primary?.pricing_title[0].text }}
@@ -34,12 +34,13 @@
     <UModal
       v-model="isOpen"
       :ui="{
-        background: 'dark:bg-white',
+        background: 'dark:!bg-white',
       }"
     >
       <PaymentPricingModal
         :paymentPlan="paymentPlan ?? null"
         @modalState="modalState"
+        class="bg-white"
       />
     </UModal>
   </section>
