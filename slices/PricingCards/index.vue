@@ -11,7 +11,7 @@
           {{ slice?.primary?.chiptext[0]?.text }}
         </h6>
         <h1 class="text-5xl font-bold text-dark-purple">
-          {{ slice?.primary?.pricing_title[0].text }}
+          {{ slice?.primary?.pricing_title[0]?.text }}
         </h1>
       </div>
       <div
@@ -47,16 +47,20 @@
 </template>
 
 <script setup lang="ts">
-import { type Content } from "@prismicio/client";
+import { type Content } from '@prismicio/client';
+import type { AuthStates } from '~/stores/userStore';
+import { useUserStore } from '~/stores/userStore';
+import { storeToRefs } from 'pinia';
+import { title } from 'process';
 
 // The array passed to `getSliceComponentProps` is purely optional.
 // Consider it as a visual hint for you when templating your slice.
 defineProps(
   getSliceComponentProps<Content.PricingCardsSlice>([
-    "slice",
-    "index",
-    "slices",
-    "context",
+    'slice',
+    'index',
+    'slices',
+    'context',
   ])
 );
 
@@ -71,6 +75,7 @@ type ItemOptions = {
 
 const isOpen = ref(false);
 const paymentPlan = ref<string>();
+const userAuth = ref<AuthStates>('init');
 
 const destruct = ({ plan, open }: { plan: string; open: boolean }) => {
   isOpen.value = open;
@@ -83,41 +88,50 @@ const modalState = (modalState: boolean) => {
 
 const itemOptions: ItemOptions[] = [
   {
-    name: "Single Purchase",
-    planType: "single",
+    name: 'Single Purchase',
+    planType: 'single',
     price: 199,
-    shortDescription: "1 Time Purchase",
+    shortDescription: '1 Time Purchase',
     bulletPoints: [
-      "Allows for 1 Address QR code to be generated.",
-      "Unlimited uses.",
-      "Can only be used to generate home address - not custom information.",
+      'Allows for 1 Address QR code to be generated.',
+      'Unlimited uses.',
+      'Can only be used to generate home address - not custom information.',
     ],
   },
   {
-    name: "Monthly ",
-    planType: "monthly",
+    name: 'Monthly ',
+    planType: 'monthly',
     price: 499,
-    shortDescription: "Monthly Subscription with unlimited QR code generation",
+    shortDescription: 'Monthly Subscription with unlimited QR code generation',
     bulletPoints: [
-      "ALL single time purchase features.",
-      "Allows for multiple Address QR codes to be generated.",
-      "Can be used unlimited times.",
-      "Can track all orders from the dashboard for the month.",
-      "Can generate QR codes with custom information.",
+      'ALL single time purchase features.',
+      'Allows for multiple Address QR codes to be generated.',
+      'Can be used unlimited times.',
+      'Can track all orders from the dashboard for the month.',
+      'Can generate QR codes with custom information.',
     ],
     mostPopular: true,
   },
   {
-    name: "Yearly",
-    planType: "yearly",
+    name: 'Yearly',
+    planType: 'yearly',
     price: 699,
-    shortDescription: "Yearly Subscription with unlimited QR code generation",
+    shortDescription: 'Yearly Subscription with unlimited QR code generation',
     bulletPoints: [
-      "ALL single time purchase and monthly subscription features",
-      "Allows for multiple Address QR codes to be generated.",
-      "Can be used Unlimited times.",
-      "A detailed breakdown on all orders for the year.",
+      'ALL single time purchase and monthly subscription features',
+      'Allows for multiple Address QR codes to be generated.',
+      'Can be used Unlimited times.',
+      'A detailed breakdown on all orders for the year.',
     ],
   },
 ];
+
+onMounted(async () => {
+  userAuth.value = await useFirebaseAuth();
+
+  useToast().add({
+    title: userAuth.value,
+    timeout: 5000000,
+  });
+});
 </script>

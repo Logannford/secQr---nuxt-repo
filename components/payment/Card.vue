@@ -42,7 +42,10 @@
                 <div
                   class="w-4 h-4 bg-secqr-purple-500 flex p-1 rounded-full text-white"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 448 512"
+                  >
                     <path
                       fill="currentColor"
                       d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"
@@ -63,7 +66,7 @@
               intent="primary"
               @click="handleCardClick()"
             >
-              {{ loading ? "Loading..." : cardText }}
+              {{ loading ? 'Loading...' : cardText }}
             </ElementButton>
           </div>
         </div>
@@ -73,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import type { AuthStates } from "~/stores/userStore";
+import type { AuthStates } from '~/stores/userStore';
 
 const cardProps = defineProps<{
   title: string;
@@ -96,22 +99,22 @@ const emit = defineEmits<{
 
 //const route = useRouter();
 const loading = ref<boolean>(false);
-const cardText = ref<string>("Start Now");
+const cardText = ref<string>('Start Now');
 const route = useRouter();
-const userAuthState = ref<AuthStates>("init");
+const userAuthState = ref<AuthStates>('init');
 
 const handleCardClick = () => {
-  if (userAuthState.value !== "authed") {
+  if (userAuthState.value !== 'authed') {
     route.push({
-      path: "sign-up",
+      path: 'sign-up',
     });
-  } else emit("modalValues", { plan: cardProps.planType, open: true });
+  } else emit('modalValues', { plan: cardProps.planType, open: true });
 };
 
 onMounted(async () => {
   userAuthState.value = await useFirebaseAuth();
-  if (userAuthState.value !== "authed") {
-    cardText.value = "Login or Sign up";
+  if (userAuthState.value !== 'authed') {
+    cardText.value = 'Login or Sign up';
   }
 });
 </script>

@@ -1,5 +1,5 @@
-import { signOut, getAuth } from "firebase/auth";
-import { useUserStore } from "~/stores/userStore";
+import { signOut, getAuth } from 'firebase/auth';
+import { useUserStore } from '~/stores/userStore';
 
 export const useUserSignOut = (): void | Error => {
   const resetUser = useUserStore().resetUser;
@@ -19,9 +19,9 @@ export const useUserSignOut = (): void | Error => {
 
       // show toast
       useToast().add({
-        id: "sign-out-toast",
-        title: "Sign out successful",
-        description: "You have been signed out of your account.",
+        id: 'sign-out-toast',
+        title: 'Sign out successful',
+        description: 'You have been signed out of your account.',
         timeout: 3000,
       });
 

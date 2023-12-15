@@ -1,13 +1,13 @@
-import { getApps } from "firebase/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import type { User } from "firebase/auth";
-import { defineStore } from "pinia";
+import { getApps } from 'firebase/app';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import type { User } from 'firebase/auth';
+import { defineStore } from 'pinia';
 
-export type AuthStates = "init" | "authed" | "not-authed";
+export type AuthStates = 'init' | 'authed' | 'not-authed';
 
-export const useUserStore = defineStore("userStore", () => {
+export const useUserStore = defineStore('userStore', () => {
   // set the user's auth state to 'fetching' - meaning not authed yet && not not-authed
-  const userAuthState = ref<AuthStates>("init");
+  const userAuthState = ref<AuthStates>('init');
 
   const currentUser = ref<User | null>(null);
 
@@ -23,16 +23,16 @@ export const useUserStore = defineStore("userStore", () => {
       // if we have an active user, then set the global user
       if (user) {
         currentUser.value = auth.currentUser;
-        userAuthState.value = "authed";
+        userAuthState.value = 'authed';
       } else {
         currentUser.value = null;
-        userAuthState.value = "not-authed";
+        userAuthState.value = 'not-authed';
       }
     });
   });
 
   const resetUser = () => {
-    userAuthState.value = "not-authed";
+    userAuthState.value = 'not-authed';
     currentUser.value = null;
   };
 
