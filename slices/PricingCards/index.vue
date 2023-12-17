@@ -14,9 +14,6 @@
           {{ slice?.primary?.pricing_title[0]?.text }}
         </h1>
       </div>
-      <div class="text-black">
-        {{ userAuth }}
-      </div>
       <div
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-5 w-5/6 xl:w-[65%] items-end h-full lg:h-3/4"
       >
@@ -51,8 +48,7 @@
 
 <script setup lang="ts">
 import { type Content } from '@prismicio/client';
-import { storeToRefs } from 'pinia';
-import { useUserStore } from '~/stores/userStore';
+
 // The array passed to `getSliceComponentProps` is purely optional.
 // Consider it as a visual hint for you when templating your slice.
 defineProps(
@@ -75,7 +71,6 @@ type ItemOptions = {
 
 const isOpen = ref(false);
 const paymentPlan = ref<string>();
-const userAuth = storeToRefs(useUserStore()).userAuthState;
 
 const destruct = ({ plan, open }: { plan: string; open: boolean }) => {
   isOpen.value = open;
@@ -125,17 +120,4 @@ const itemOptions: ItemOptions[] = [
     ],
   },
 ];
-
-onMounted(async () => {
-  userAuth.value = await useFirebaseAuth();
-
-  watch(userAuth, (newValue) => {
-    if (newValue) {
-      useToast().add({
-        title: userAuth.value,
-        timeout: 5000000,
-      });
-    }
-  });
-});
 </script>

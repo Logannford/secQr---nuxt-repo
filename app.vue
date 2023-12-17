@@ -11,21 +11,22 @@
   we will need to watch the route path and the auth state from the store
 */
 
-import { useUserStore } from "~/stores/userStore";
-import { storeToRefs } from "pinia";
+import { useUserStore } from '~/stores/userStore';
+import { storeToRefs } from 'pinia';
 
 const userStore = useUserStore();
 
 const { currentUser } = storeToRefs(userStore);
 const { resetUser } = userStore;
+const userAuth = storeToRefs(userStore).userAuthState;
 const route = useRoute();
 
 watch(
   () => route.path,
   async () => {
     // reset the current user if they navigate to the sign up page
-    if (route.path.startsWith("/sign-up")) {
-      console.log("sign up page");
+    if (route.path.startsWith('/sign-up')) {
+      console.log('sign up page');
       resetUser();
     }
 
@@ -34,10 +35,24 @@ watch(
   }
 );
 
+userAuth.value = await useFirebaseAuth();
+
+//watch the userAuth state to show a toast
+watch(userAuth, (newValue) => {
+  // only show the toast if the auth state has changed once,
+  // don't show multiple toasts for one auth change
+  if (newValue !== userAuth.value) {
+    useToast().add({
+      title: userAuth.value,
+      timeout: 5000000,
+    });
+  }
+});
+
 // need to create an 'init' method for auth on page mount
 onMounted(async () => {
   await useFirebaseAuth();
   console.log(currentUser.value?.email);
-  console.log("mounted");
+  console.log('mounted');
 });
 </script>
