@@ -66,7 +66,7 @@
               intent="primary"
               @click="handleCardClick()"
             >
-              {{ loading ? 'Loading...' : cardText }}
+              {{ loading ? 'Loading...' : cardText }} {{ userAuthState }}
             </ElementButton>
           </div>
         </div>
@@ -77,6 +77,8 @@
 
 <script setup lang="ts">
 import type { AuthStates } from '~/stores/userStore';
+import { useUserStore } from '~/stores/userStore';
+import { storeToRefs } from 'pinia';
 
 const cardProps = defineProps<{
   title: string;
@@ -101,7 +103,7 @@ const emit = defineEmits<{
 const loading = ref<boolean>(false);
 const cardText = ref<string>('Start Now');
 const route = useRouter();
-const userAuthState = ref<AuthStates>('init');
+const userAuthState = storeToRefs(useUserStore()).userAuthState;
 
 const handleCardClick = () => {
   if (userAuthState.value !== 'authed') {

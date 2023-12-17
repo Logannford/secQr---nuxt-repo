@@ -44,7 +44,7 @@
           v-if="userAuthed"
           label="Log Out"
           class="!text-black"
-          @click="useUserSignOut()"
+          @click="signOutUser()"
           variant="outline"
         />
       </div>
@@ -53,17 +53,18 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from "~/stores/userStore";
-import { storeToRefs } from "pinia";
+import { useUserStore } from '~/stores/userStore';
+import { storeToRefs } from 'pinia';
 
 const { client } = usePrismic();
-const { data: nav } = useAsyncData<any>(() => client.getByType("layout"));
+const { data: nav } = useAsyncData<any>(() => client.getByType('layout'));
 
 const userStore = useUserStore();
-const { currentUser } = storeToRefs(userStore);
+const signOutUser = userStore.signOutUser;
+const userAuthState = storeToRefs(userStore).userAuthState;
 
 const userAuthed = computed(() => {
-  return currentUser.value?.email;
+  return userAuthState.value === 'authed' ? true : false;
 });
 
 const dashboardLabel = computed(() => {
@@ -88,7 +89,7 @@ const handleMouseLeave = () => {
 };
 
 onMounted(() => {
-  console.log(nav.value);
+  console.log(userAuthed.value);
 });
 
 /*

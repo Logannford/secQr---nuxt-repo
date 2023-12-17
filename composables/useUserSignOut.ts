@@ -1,9 +1,10 @@
 import { signOut, getAuth } from 'firebase/auth';
 import { useUserStore } from '~/stores/userStore';
+import { storeToRefs } from 'pinia';
 
 export const useUserSignOut = (): void | Error => {
   const resetUser = useUserStore().resetUser;
-
+  const { userAuthState } = storeToRefs(useUserStore());
   const signingOut = ref<boolean>(false);
 
   const handleSignOut = async (): Promise<void | Error> => {
@@ -16,6 +17,9 @@ export const useUserSignOut = (): void | Error => {
       await signOut(auth);
       // reset the user
       resetUser();
+
+      userAuthState.value = 'not-authed';
+      console.log(userAuthState.value);
 
       // show toast
       useToast().add({
