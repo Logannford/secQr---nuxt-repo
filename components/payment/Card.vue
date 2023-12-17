@@ -76,7 +76,6 @@
 </template>
 
 <script setup lang="ts">
-import type { AuthStates } from '~/stores/userStore';
 import { useUserStore } from '~/stores/userStore';
 import { storeToRefs } from 'pinia';
 
