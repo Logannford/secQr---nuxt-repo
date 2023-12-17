@@ -35,23 +35,19 @@ watch(
   }
 );
 
-userAuth.value = await useFirebaseAuth();
-
-//watch the userAuth state to show a toast
-watch(userAuth, (newValue) => {
-  // only show the toast if the auth state has changed once,
-  // don't show multiple toasts for one auth change
-  if (newValue !== userAuth.value) {
-    useToast().add({
-      title: userAuth.value,
-      timeout: 5000000,
-    });
-  }
-});
-
 // need to create an 'init' method for auth on page mount
 onMounted(async () => {
-  await useFirebaseAuth();
+  userAuth.value = await useFirebaseAuth();
+
+  //watch the userAuth state to show a toast
+  watch(userAuth, (newValue) => {
+    if (newValue) {
+      useToast().add({
+        title: userAuth.value,
+        timeout: 5000000,
+      });
+    }
+  });
   console.log(currentUser.value?.email);
   console.log('mounted');
 });
