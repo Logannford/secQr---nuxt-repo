@@ -1,8 +1,8 @@
-import { getApps } from "firebase/app"
-import { getAuth } from "firebase/auth"
+import { getApps } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import type { User } from 'firebase/auth';
 
-export const useFirebaseUser = (): boolean | undefined => {
-    if(!getApps().length)
-        return;
-    return !!getAuth().currentUser;
-}
+export const useFirebaseUser = (): User | null => {
+  if (!getApps().length) return null;
+  return getAuth().currentUser;
+};

@@ -48,10 +48,6 @@
 
 <script setup lang="ts">
 import { type Content } from '@prismicio/client';
-import type { AuthStates } from '~/stores/userStore';
-import { useUserStore } from '~/stores/userStore';
-import { storeToRefs } from 'pinia';
-import { title } from 'process';
 
 // The array passed to `getSliceComponentProps` is purely optional.
 // Consider it as a visual hint for you when templating your slice.
@@ -75,7 +71,6 @@ type ItemOptions = {
 
 const isOpen = ref(false);
 const paymentPlan = ref<string>();
-const userAuth = ref<AuthStates>('init');
 
 const destruct = ({ plan, open }: { plan: string; open: boolean }) => {
   isOpen.value = open;
@@ -125,13 +120,4 @@ const itemOptions: ItemOptions[] = [
     ],
   },
 ];
-
-onMounted(async () => {
-  userAuth.value = await useFirebaseAuth();
-
-  useToast().add({
-    title: userAuth.value,
-    timeout: 5000000,
-  });
-});
 </script>
