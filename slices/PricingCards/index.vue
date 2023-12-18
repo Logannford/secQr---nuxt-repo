@@ -4,15 +4,19 @@
     :data-slice-variation="slice.variation"
   >
     <div
-      class="text-white h-full lg:h-screen w-full flex flex-col gap-y-12 justify-center items-center bg-white/95 inside-container"
+      class="text-dark-purple h-full lg:h-screen w-full flex flex-col gap-y-12 justify-center items-center bg-white/95 inside-container"
     >
-      <div class="flex flex-col items-center gap-y-3 text-black">
-        <h6 class="bg-gray-200 px-4 py-2 rounded-xl text-xs text-dark-purple">
+      <div class="flex flex-col items-center gap-y-3">
+        <h6 class="bg-gray-200 px-4 py-2 rounded-xl text-xs">
           {{ slice?.primary?.chiptext[0]?.text }}
         </h6>
-        <h1 class="text-5xl font-bold text-dark-purple">
+        <h1 class="text-5xl font-bold">
           {{ slice?.primary?.pricing_title[0]?.text }}
         </h1>
+      </div>
+      <div v-if="loading">Loading...</div>
+      <div v-else>
+        {{ productList ?? 'No products' }}
       </div>
       <div
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-5 w-5/6 xl:w-[65%] items-end h-full lg:h-3/4"
@@ -48,6 +52,7 @@
 
 <script setup lang="ts">
 import { type Content } from '@prismicio/client';
+import Stripe from 'stripe';
 
 // The array passed to `getSliceComponentProps` is purely optional.
 // Consider it as a visual hint for you when templating your slice.
@@ -71,6 +76,7 @@ type ItemOptions = {
 
 const isOpen = ref(false);
 const paymentPlan = ref<string>();
+const loading = ref<boolean>(false);
 
 const destruct = ({ plan, open }: { plan: string; open: boolean }) => {
   isOpen.value = open;
@@ -120,4 +126,27 @@ const itemOptions: ItemOptions[] = [
     ],
   },
 ];
+
+const productList = ref<Stripe.Product[] | any>([]);
+
+onMounted(async () => {
+  try {
+    loading.value = true;
+
+    const products = $fetch<Stripe.Product[]>('/api/stripe/stripeProducts', {
+      method: 'GET',
+    });
+
+    if (!products) return;
+
+    productList.value = await products;
+
+    loading.value = false;
+  } catch (error: any) {
+    throw createError({
+      statusCode: 400,
+      message: error.message,
+    });
+  }
+});
 </script>

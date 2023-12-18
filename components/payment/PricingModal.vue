@@ -6,7 +6,10 @@
     >
       <span class="text-black text-2xl font-bold"> Payment Details </span>
       <div class="border border-gray-300 p-5 rounded">
-        <div v-if="loading" class="text-black w-full flex justify-center">
+        <div
+          v-if="loading"
+          class="text-black w-full flex justify-center"
+        >
           <Spinner class="w-5 h-5" />
         </div>
         <!-- injected elements via stripe -->
@@ -31,9 +34,15 @@
           <span v-if="paymentLoading">
             <Spinner class="w-5 h-5" />
           </span>
-          <div v-else class="flex gap-x-2 items-center">
+          <div
+            v-else
+            class="flex gap-x-2 items-center"
+          >
             <span> Pay now </span>
-            <Spinner v-if="loading" class="w-4 h-5" />
+            <Spinner
+              v-if="loading"
+              class="w-4 h-5"
+            />
           </div>
         </button>
       </div>
@@ -42,11 +51,10 @@
 </template>
 
 <script setup lang="ts">
-import { loadStripe } from "@stripe/stripe-js";
-import { useUserStore } from "~/stores/userStore";
-import { storeToRefs } from "pinia";
-import type { StripeResponse } from "~/types/StripeResponse";
-import type { User } from "firebase/auth";
+import { loadStripe } from '@stripe/stripe-js';
+import { useUserStore } from '~/stores/userStore';
+import { storeToRefs } from 'pinia';
+import type { StripeResponse } from '~/types/StripeResponse';
 
 const stripe = await loadStripe(useRuntimeConfig().public.stripePublicKey);
 const router = useRouter();
@@ -90,14 +98,14 @@ onMounted(async () => {
   if (!currentUserEmail.value || !props.paymentPlan)
     throw createError({
       statusCode: 400,
-      message: "Error getting user email AND OR payment plan",
+      message: 'Error getting user email AND OR payment plan',
     });
 
   try {
     const stripeResponse = await useFetch<StripeResponse>(
-      "/api/stripe/subscribe",
+      '/api/stripe/subscribe',
       {
-        method: "POST",
+        method: 'POST',
         body: {
           customerEmail: currentUserEmail.value,
           planType: props.paymentPlan ?? null,
@@ -106,10 +114,10 @@ onMounted(async () => {
     );
 
     if (!stripeResponse?.data?.value) {
-      return await router.push({
-        path: "/pricing",
+      return router.push({
+        path: '/pricing',
         query: {
-          error: "true",
+          error: 'true',
         },
       });
     }
@@ -126,19 +134,19 @@ onMounted(async () => {
       stripeElements.value = stripe.elements({
         clientSecret: paymentIntentClientSecret.value,
         appearance: {
-          theme: "stripe",
+          theme: 'stripe',
         },
       });
     } catch (err) {
       throw createError({
         statusCode: 400,
-        message: "Error creating stripe elements",
+        message: 'Error creating stripe elements',
       });
     }
   } catch (err) {
     throw createError({
       statusCode: 400,
-      message: "Error creating stripe payment",
+      message: 'Error creating stripe payment',
     });
   }
 
@@ -146,7 +154,7 @@ onMounted(async () => {
   loading.value = false;
 
   // mount the payment element to the DOM
-  const paymentElements = stripeElements.value.create("payment");
+  const paymentElements = stripeElements.value.create('payment');
   paymentElements.mount(stripeElementMount.value);
 });
 
@@ -162,7 +170,7 @@ const handlePayment = async (): Promise<void> => {
   } catch (err) {
     throw createError({
       statusCode: 400,
-      message: "Error confirming payment",
+      message: 'Error confirming payment',
     });
   }
   paymentLoading.value = false;
