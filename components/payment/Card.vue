@@ -83,9 +83,9 @@ const cardProps = defineProps<{
   title: string;
   planType: string;
   price: number;
-  shortDescription: string;
-  bulletPoints: string[];
-  mostPopular?: boolean;
+  shortDescription?: string | null;
+  bulletPoints?: string[];
+  mostPopular?: string;
   index: number;
 }>();
 
