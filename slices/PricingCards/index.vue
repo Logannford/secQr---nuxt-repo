@@ -15,10 +15,15 @@
         </h1>
       </div>
       <div v-if="loading">Loading...</div>
-      <div v-else>
-        {{ productList ?? 'No products' }}
-      </div>
       <div
+        v-else
+        class="flex flex-col gap-y-10"
+      >
+        <div v-for="product in productList">
+          {{ product ?? 'No products' }}
+        </div>
+      </div>
+      <!-- <div
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-5 w-5/6 xl:w-[65%] items-end h-full lg:h-3/4"
       >
         <PaymentCard
@@ -30,6 +35,21 @@
           :price="item.price"
           :bulletPoints="item.bulletPoints"
           :mostPopular="item.mostPopular"
+          :index="index"
+          @modalValues="destruct"
+        />
+      </div> -->
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-5 w-5/6 xl:w-[65%] items-end h-full lg:h-3/4"
+      >
+        <PaymentCard
+          v-for="(product, index) in productList"
+          :key="product.id"
+          :title="product.name"
+          :planType="product.metadata?.planType"
+          :shortDescription="product?.description"
+          :price="product?.default_price?.unit_amount"
+          :mostPopular="product?.metadata?.mostPopular"
           :index="index"
           @modalValues="destruct"
         />
@@ -53,6 +73,7 @@
 <script setup lang="ts">
 import { type Content } from '@prismicio/client';
 import Stripe from 'stripe';
+import type { StripeProduct } from '~/types/productList';
 
 // The array passed to `getSliceComponentProps` is purely optional.
 // Consider it as a visual hint for you when templating your slice.
@@ -127,19 +148,36 @@ const itemOptions: ItemOptions[] = [
   },
 ];
 
-const productList = ref<Stripe.Product[] | any>([]);
+const productList = ref<StripeProduct[]>([]);
 
 onMounted(async () => {
   try {
     loading.value = true;
 
-    const products = $fetch<Stripe.Product[]>('/api/stripe/stripeProducts', {
-      method: 'GET',
-    });
+    const response = await $fetch<{ products: Stripe.Product[] }>(
+      '/api/stripe/stripeProducts',
+      {
+        method: 'GET',
+      }
+    );
+
+    if (!response) return;
+
+    const products = response.products;
 
     if (!products) return;
 
-    productList.value = await products;
+    const extractedProducts = products.map((product: Stripe.Product) => {
+      return {
+        id: product?.id,
+        name: product?.name,
+        description: product?.description,
+        default_price: product?.default_price,
+        metadata: product?.metadata,
+      };
+    });
+
+    productList.value = extractedProducts;
 
     loading.value = false;
   } catch (error: any) {
