@@ -4,7 +4,7 @@
     :class="[
       cardProps.mostPopular
         ? 'border-4 border-light-purple h-full'
-        : 'border border-gray-400 h-full lg:h-[95%] hover:h-full',
+        : 'border border-gray-400 h-full hover:h-full',
       cardProps.index === 2 ? 'col-span-full lg:col-span-1' : 'col-span-1',
     ]"
   >

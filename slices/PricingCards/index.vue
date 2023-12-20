@@ -24,7 +24,7 @@
         </div>
       </div> -->
       <div
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-5 w-5/6 xl:w-[65%] items-end h-full lg:h-3/4"
+        class="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-5 w-[65%] items-end h-max"
       >
         <PaymentCard
           v-for="(product, index) in productList"
