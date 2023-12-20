@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from '~/stores/userStore';
+import { useUserStore, type AuthStates } from '~/stores/userStore';
 import { storeToRefs } from 'pinia';
 
 const cardProps = defineProps<{
@@ -84,7 +84,7 @@ const cardProps = defineProps<{
   planType: string;
   price: number;
   shortDescription?: string | null;
-  bulletPoints?: string[];
+  bulletPoints?: { name: string }[];
   mostPopular?: string;
   index: number;
 }>();
@@ -100,7 +100,6 @@ const emit = defineEmits<{
 
 //const route = useRouter();
 const loading = ref<boolean>(false);
-const cardText = ref<string>('Start Now');
 const route = useRouter();
 const userAuthState = storeToRefs(useUserStore()).userAuthState;
 
@@ -112,10 +111,15 @@ const handleCardClick = () => {
   } else emit('modalValues', { plan: cardProps.planType, open: true });
 };
 
+const cardText = computed(() => {
+  if (userAuthState.value === 'authed') {
+    return 'Subscribe';
+  } else {
+    return 'Login or Sign up';
+  }
+});
+
 onMounted(async () => {
   userAuthState.value = await useFirebaseAuth();
-  if (userAuthState.value !== 'authed') {
-    cardText.value = 'Login or Sign up';
-  }
 });
 </script>
