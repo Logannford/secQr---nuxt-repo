@@ -4,7 +4,7 @@
     :class="[
       cardProps.mostPopular
         ? 'border-4 border-light-purple h-full'
-        : 'border border-gray-400 h-full lg:h-[95%] hover:h-full',
+        : 'border border-gray-400 h-full hover:h-full',
       cardProps.index === 2 ? 'col-span-full lg:col-span-1' : 'col-span-1',
     ]"
   >
@@ -76,16 +76,16 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from '~/stores/userStore';
+import { useUserStore, type AuthStates } from '~/stores/userStore';
 import { storeToRefs } from 'pinia';
 
 const cardProps = defineProps<{
   title: string;
   planType: string;
   price: number;
-  shortDescription: string;
-  bulletPoints: string[];
-  mostPopular?: boolean;
+  shortDescription?: string | null;
+  bulletPoints?: { name: string }[];
+  mostPopular?: string;
   index: number;
 }>();
 
@@ -100,7 +100,6 @@ const emit = defineEmits<{
 
 //const route = useRouter();
 const loading = ref<boolean>(false);
-const cardText = ref<string>('Start Now');
 const route = useRouter();
 const userAuthState = storeToRefs(useUserStore()).userAuthState;
 
@@ -112,10 +111,15 @@ const handleCardClick = () => {
   } else emit('modalValues', { plan: cardProps.planType, open: true });
 };
 
+const cardText = computed(() => {
+  if (userAuthState.value === 'authed') {
+    return 'Subscribe';
+  } else {
+    return 'Login or Sign up';
+  }
+});
+
 onMounted(async () => {
   userAuthState.value = await useFirebaseAuth();
-  if (userAuthState.value !== 'authed') {
-    cardText.value = 'Login or Sign up';
-  }
 });
 </script>
