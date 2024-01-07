@@ -2,17 +2,17 @@
   <div
     class="rounded-xl bg-white text-dark-black w-full shadow-lg shadow-gray-300 overflow-hidden duration-300"
     :class="[
-      cardProps.mostPopular
+      cardProps?.mostPopular
         ? 'border-4 border-light-purple h-full'
         : 'border border-gray-400 h-full hover:h-full',
-      cardProps.index === 2 ? 'col-span-full lg:col-span-1' : 'col-span-1',
+      cardProps?.index === 2 ? 'col-span-full lg:col-span-1' : 'col-span-1',
     ]"
   >
     <div
       class="flex flex-col items-center text-center h-full relative overflow-hidden"
     >
       <div
-        v-if="cardProps.mostPopular"
+        v-if="cardProps?.mostPopular"
         class="w-full h-[5%] bg-light-purple text-white"
       >
         Most popular
@@ -30,12 +30,12 @@
             </h6>
             <div>
               <p class="text-xs">
-                {{ cardProps.shortDescription }}
+                {{ cardProps?.shortDescription }}
               </p>
             </div>
             <ul class="text-start mt-10 flex flex-col gap-y-3 text-sm">
               <li
-                v-for="(items, index) in bulletPoints"
+                v-for="(point, index) in cardProps?.bulletPoints"
                 :key="index"
                 class="flex gap-x-2"
               >
@@ -53,7 +53,7 @@
                   </svg>
                 </div>
                 <span>
-                  {{ items }}
+                  {{ point }}
                 </span>
               </li>
             </ul>
@@ -78,6 +78,7 @@
 <script setup lang="ts">
 import { useUserStore, type AuthStates } from '~/stores/userStore';
 import { storeToRefs } from 'pinia';
+import type { StripeProduct } from '~/types/productList';
 
 const cardProps = defineProps<{
   title: string;

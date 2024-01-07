@@ -8,12 +8,11 @@ import { storeToRefs } from 'pinia';
 import { doc, getFirestore, updateDoc } from 'firebase/firestore';
 import { getApps } from 'firebase/app';
 
-import type { FirebaseDatabaseUser } from '~/types/FirestoreUser';
+import type { User } from '~/types/User';
 
 const userStore = useUserStore();
 const { currentUser, userAuthState } = storeToRefs(userStore);
 const db = ref();
-const isOpen = ref<boolean>(false);
 
 const updateFirestoreDbWith = async (): Promise<void> => {
   if (getApps().length) db.value = getFirestore();
@@ -27,12 +26,17 @@ const updateFirestoreDbWith = async (): Promise<void> => {
     });
 
   //needs to be typed
-  const transactionData: FirebaseDatabaseUser['subscription'] = {
+  const transactionData: User['subscription'] = {
     paymentEmail: currentUser.value?.email,
+
+    // need to fetch the transaction id from the stripe response
     transactionId: '',
-    planType: '',
+
+    // need to get this from the stripe response
+    planType: 'single',
     subscriptionActive: true,
     dateOfPurchase: new Date().toISOString(),
+    dateOfExpiry: new Date().toISOString() + 30,
   };
 
   // try catch to update the users creds
