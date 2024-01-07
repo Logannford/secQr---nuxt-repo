@@ -78,14 +78,13 @@
 <script setup lang="ts">
 import { useUserStore, type AuthStates } from '~/stores/userStore';
 import { storeToRefs } from 'pinia';
-import type { StripeProduct } from '~/types/productList';
 
 const cardProps = defineProps<{
   title: string;
   planType: string;
   price: number;
   shortDescription?: string | null;
-  bulletPoints?: { name: string }[];
+  bulletPoints?: string[];
   mostPopular?: string;
   index: number;
 }>();

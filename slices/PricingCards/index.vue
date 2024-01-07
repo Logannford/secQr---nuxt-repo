@@ -21,7 +21,7 @@
         </h1>
       </div>
       <div v-if="loading">Loading...</div>
-      <div
+      <!-- <div
         v-else
         class="flex flex-col gap-y-10"
       >
@@ -31,10 +31,9 @@
         >
           {{ JSON.stringify(product, null, 2) ?? 'No products' }}
         </div>
-      </div>
+      </div> -->
       <div
         class="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-5 w-[65%] items-end h-max"
-        v-if="!loading"
       >
         <div v-for="(product, index) in productList">
           <PaymentCard
@@ -111,27 +110,28 @@ onMounted(async () => {
 
     if (!response) return;
 
-    const products = response.products;
-
-    if (!products) return;
-
     // extract only the data we need from the products we get returned back from the stripe api
-    const extractedProducts = products.map(
-      (product: Stripe.Product): StripeProduct => {
+    const extractedProducts = response.products.map(
+      (product: Stripe.Product): StripeProduct | undefined => {
         // if there is no product or no default price then return
         if (!product || !product.default_price || !product.id) return;
         return {
           id: product?.id,
           name: product?.name,
           description: product?.description,
-          default_price: product?.default_price?.unit_amount,
+          // @ts-ignore - this is a stripe type error as it does not know that we
+          // have expanded the default_price object
+          default_price: product?.default_price,
           metadata: product?.metadata,
           features: product?.features.map((feature) => feature?.name),
         };
       }
     );
 
-    productList.value = extractedProducts;
+    if (!extractedProducts) return;
+
+    // if we get to this point, we know the extractedProducts array is not undefined
+    productList.value = extractedProducts as StripeProduct[];
 
     loading.value = false;
   } catch (error: any) {

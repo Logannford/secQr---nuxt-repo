@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 // we only need these properties from the Stripe.Product type
 type StripeProductBase = Pick<
   Stripe.Product,
-  'id' | 'name' | 'description' | 'features' | 'metadata'
+  'id' | 'name' | 'description' | 'metadata'
 >;
 
 /**
@@ -13,4 +13,5 @@ type StripeProductBase = Pick<
  */
 export interface StripeProduct extends StripeProductBase {
   default_price: Stripe.Price;
+  features: string[];
 }

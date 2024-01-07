@@ -10,7 +10,9 @@ export default defineEventHandler(async () => {
     typescript: true,
   });
 
-  const returnStripeProducts = async () => {
+  const listAllStripeProducts = async (): Promise<
+    Record<'products', Stripe.Product[]> | undefined
+  > => {
     // we need a stripe instance
     if (!stripe) return;
 
@@ -25,5 +27,5 @@ export default defineEventHandler(async () => {
       products: allProducts.data,
     };
   };
-  return await returnStripeProducts();
+  return await listAllStripeProducts();
 });
