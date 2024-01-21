@@ -46,7 +46,7 @@
         data-cy="submit-btn"
         type="submit"
         :value="loading ? 'Loading...' : 'Submit'"
-        :disabled="!validEmail || validPassword"
+        :disabled="!validEmail"
       />
     </form>
   </div>
@@ -85,9 +85,5 @@ const handleLogin = async () => {
 
 const validEmail = computed<boolean>(() => {
   return /[!@#$%^&*(),.?":{}|<>]/.test(email.value);
-});
-
-const validPassword = computed<boolean>(() => {
-  return password.value.length < 8;
 });
 </script>
