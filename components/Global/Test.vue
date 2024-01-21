@@ -47,6 +47,13 @@
           @click="signOutUser()"
           variant="outline"
         />
+        <UButton
+          v-else
+          label="Log In"
+          class="!text-black"
+          to="/login"
+          variant="outline"
+        />
       </div>
     </div>
   </nav>

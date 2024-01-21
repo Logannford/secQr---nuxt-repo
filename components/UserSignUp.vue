@@ -2,6 +2,7 @@
   <div
     class="w-full h-screen flex flex-col justify-center items-center bg-dark-black"
   >
+    <h1 class="text-5xl font-bold">Sign up</h1>
     <form
       @submit.prevent="handleRegistration()"
       class="flex flex-col gap-y-6 w-56 justify-center items-center text-white"

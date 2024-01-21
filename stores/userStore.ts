@@ -4,6 +4,7 @@ import {
   onAuthStateChanged,
   signOut,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
 } from 'firebase/auth';
 import { defineStore } from 'pinia';
 import type { User, Auth } from 'firebase/auth';
@@ -16,6 +17,7 @@ export const useUserStore = defineStore('userStore', () => {
   const userAuthState = ref<AuthStates>('init');
 
   const currentUser = ref<User | null>(null);
+  const loggingIn = ref<boolean>(false);
 
   const userSignUp = async (
     email: string,
@@ -63,6 +65,40 @@ export const useUserStore = defineStore('userStore', () => {
     return false;
   };
 
+  const userLoginIn = async (
+    email: string,
+    password: string
+  ): Promise<boolean> => {
+    const auth = getAuth();
+    loggingIn.value = true;
+
+    try {
+      const userCredentials = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      if (userCredentials && userCredentials.user.uid) {
+        // we have successfully logged in the user - set the auth state to authed
+        userAuthState.value = 'authed';
+        loggingIn.value = false;
+        return true;
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        useToast().add({
+          id: 'login-error-toast',
+          title: 'Login error',
+          description: e.message,
+        });
+        // an error occurred - set the auth state to not-authed
+        userAuthState.value = 'not-authed';
+      }
+      loggingIn.value = false;
+    }
+    return false;
+  };
+
   const signOutUser = async (): Promise<void | Error> => {
     const signingOut = ref<boolean>(false);
     const auth = getAuth();
@@ -96,7 +132,7 @@ export const useUserStore = defineStore('userStore', () => {
     }
   };
 
-  const resetUser = async (): Promise<void> => {
+  const resetUser = async () => {
     const auth = getAuth();
 
     try {
@@ -144,10 +180,15 @@ export const useUserStore = defineStore('userStore', () => {
   });
 
   return {
-    currentUser,
+    // methods
     resetUser,
-    userAuthState,
     signOutUser,
     userSignUp,
+    userLoginIn,
+
+    // variables
+    loggingIn,
+    userAuthState,
+    currentUser,
   };
 });
