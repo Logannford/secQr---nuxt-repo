@@ -11,12 +11,6 @@
     <div
       class="flex flex-col items-center text-center h-full relative overflow-hidden"
     >
-      <!-- <div
-        v-if="cardProps?.mostPopular"
-        class="w-full h-[5%] bg-light-purple text-white"
-      >
-        Most popular {{ cardProps.loadingValues }}
-      </div> -->
       <div
         class="p-8 inside-container flex flex-col items-center text-center h-full w-full"
       >
