@@ -1,3 +1,7 @@
+/**
+ * https://dev.to/martinpersson/a-guide-to-using-the-option-type-in-typescript-ki2#the-problem-with-null-and-undefined
+ */
+
 // Define a generic type called 'Option' with a type parameter T
 export type Option<T> = { kind: 'none' } | { kind: 'some'; value: T };
 
