@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 import type { StripeResponse } from '~/types/StripeResponse';
 import type { RuntimeConfig } from 'nuxt/schema';
+import { type Option, none, some } from '~/types/Option';
 
 export default defineEventHandler(async (event) => {
   const config: RuntimeConfig = useRuntimeConfig();
@@ -18,13 +19,13 @@ export default defineEventHandler(async (event) => {
   // do a look up to see if we already have the email address as a customer
   const findCustomer = async (
     userEmail: string
-  ): Promise<Stripe.Customer | Boolean> => {
+  ): Promise<Stripe.Customer | false> => {
     try {
       // try to search for the customer via their email address
       const existingCustomer: Stripe.Response<Stripe.ApiList<Stripe.Customer>> =
         await stripe.customers.list({
           email: userEmail,
-          limit: 10,
+          limit: 1,
         });
 
       // if there is no customers, an empty array gets returned
@@ -66,14 +67,21 @@ export default defineEventHandler(async (event) => {
    * and are either generated one-off, or generated periodically
    * from a subscription
    *
+   * - First time using option types in typescript!
+   * - Option types are a way of representing a value that may or may not exist
+   * - We use them here to represent the client secret, which may or may not exist
+   * - We use the Option type to represent this
+   * - We can use the some() and none() functions to create an Option type
+   *
+   *
    * @param user
-   * @returns clientSecret OR Null
+   * @returns clientSecret - a string that is used to confirm the payment
    */
 
   const createAnInvoice = async (
     user: Stripe.Customer,
     amount: number
-  ): Promise<string | null> => {
+  ): Promise<Option<string>> => {
     // we need the payment intent and user
     if (!user || !user.email) {
       throw createError({
@@ -121,24 +129,22 @@ export default defineEventHandler(async (event) => {
         });
       }
 
-      let paymentIntent: Stripe.PaymentIntent | null;
+      let paymentIntent: Stripe.PaymentIntent;
+
+      // if the payment intent is not a string, we need to cancel the flow
+      if (typeof paymentIntentId !== 'string') return none();
 
       // if the payment intent is a string, we need to update it
-      if (typeof paymentIntentId === 'string') {
-        await stripe.paymentIntents.retrieve(paymentIntentId);
-      }
+      await stripe.paymentIntents.retrieve(paymentIntentId);
 
       // update the payment intent with the new payment intent id
-      paymentIntent = await stripe.paymentIntents.update(
-        paymentIntentId as string,
-        {
-          metadata: {
-            email: user?.email,
-            amount: amount,
-          },
-          receipt_email: user?.email,
-        }
-      );
+      paymentIntent = await stripe.paymentIntents.update(paymentIntentId, {
+        metadata: {
+          email: user?.email,
+          amount: amount,
+        },
+        receipt_email: user?.email,
+      });
 
       if (!paymentIntent.client_secret)
         throw createError({
@@ -146,7 +152,8 @@ export default defineEventHandler(async (event) => {
           message: 'Failed to create payment intent',
         });
 
-      return paymentIntent?.client_secret;
+      // if we have the client secret, we can return it
+      return some(paymentIntent.client_secret);
     } catch (error) {
       if (error instanceof Error) {
         throw createError({
@@ -227,9 +234,12 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    const invoice: string | null = await createAnInvoice(
+    if (!currentPlanType) return null;
+
+    // - if a value gets returned - it will be of type string
+    const invoice: Option<string> = await createAnInvoice(
       currentUser as Stripe.Customer,
-      currentPlanType?.price as number
+      currentPlanType?.price
     );
 
     console.log(invoice);
