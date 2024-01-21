@@ -81,6 +81,8 @@ export default defineEventHandler(async (event) => {
   const createAnInvoice = async (
     user: Stripe.Customer,
     amount: number
+    // the return type will either be 'some' or 'none'
+    // but if it is 'some' - it will be a string
   ): Promise<Option<string>> => {
     // we need the payment intent and user
     if (!user || !user.email) {
