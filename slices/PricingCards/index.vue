@@ -20,7 +20,6 @@
           {{ slice?.primary?.pricing_title[0]?.text }}
         </h1>
       </div>
-      <div v-if="loading">Loading...</div>
       <!-- <div
         v-else
         class="flex flex-col gap-y-10"
@@ -33,22 +32,33 @@
         </div>
       </div> -->
       <div
-        class="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-5 w-[65%] items-end h-max"
+        v-if="!loading"
+        class="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-5 w-[55%] items-end h-max"
       >
-        <div v-for="(product, index) in productList">
+        <div
+          v-for="(product, index) in productList"
+          class="h-full"
+        >
           <PaymentCard
-            v-if="product.default_price.unit_amount"
             :key="product.id"
             :title="product.name"
             :planType="product.metadata?.planType"
             :shortDescription="product?.description"
-            :price="product?.default_price?.unit_amount"
+            :price="product?.default_price?.unit_amount ?? 0"
             :mostPopular="product?.metadata?.mostPopular"
             :bulletPoints="product?.features"
             :index="index"
+            :loadingValues="loading"
             @modalValues="destruct"
           />
         </div>
+      </div>
+      <div
+        v-else
+        class="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-5 w-[55%] items-end h-[500px]"
+      >
+        <USkeleton class="w-full h-full" />
+        <USkeleton class="w-full h-full" />
       </div>
     </div>
     <UModal
@@ -84,7 +94,7 @@ defineProps(
 
 const isOpen = ref(false);
 const paymentPlan = ref('');
-const loading = ref(false);
+const loading = ref(true);
 
 const destruct = ({ plan, open }: { plan: string; open: boolean }) => {
   isOpen.value = open;

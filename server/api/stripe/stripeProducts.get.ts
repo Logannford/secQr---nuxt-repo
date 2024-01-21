@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import type { RuntimeConfig } from 'nuxt/schema';
+import type { User } from '~/types/User';
 
 export default defineEventHandler(async () => {
   const { private: config }: RuntimeConfig = useRuntimeConfig();
