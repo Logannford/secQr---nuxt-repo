@@ -1,41 +1,49 @@
 <template>
   <div
-    class="rounded-xl bg-white text-dark-black w-full shadow-lg shadow-gray-300 overflow-hidden duration-300"
+    class="rounded-xl bg-white text-dark-black w-full h-full shadow-lg shadow-gray-300 overflow-hidden duration-300"
     :class="[
-      cardProps.mostPopular
-        ? 'border-4 border-light-purple h-full'
-        : 'border border-gray-400 h-full hover:h-full',
-      cardProps.index === 2 ? 'col-span-full lg:col-span-1' : 'col-span-1',
+      cardProps?.mostPopular
+        ? 'border-4 border-light-purple'
+        : 'border border-gray-400',
+      cardProps?.index === 2 ? 'col-span-full lg:col-span-1' : 'col-span-1',
     ]"
   >
     <div
       class="flex flex-col items-center text-center h-full relative overflow-hidden"
     >
       <div
-        v-if="cardProps.mostPopular"
-        class="w-full h-[5%] bg-light-purple text-white"
-      >
-        Most popular
-      </div>
-      <div
-        class="p-8 inside-container flex flex-col items-center text-center h-full"
+        class="p-8 inside-container flex flex-col items-center text-center h-full w-full"
       >
         <div class="rounded w-14 h-14">
           <TestQr />
         </div>
-        <div class="flex flex-col gap-y-2 h-full justify-between">
-          <div class="flex flex-col gap-y-1">
-            <h6 class="font-bold text-2xl">
+        <div class="flex flex-col gap-y-2 h-full w-full justify-between">
+          <div class="flex flex-col items-center gap-y-1">
+            <h6
+              v-if="!loadingValues"
+              class="font-bold text-2xl"
+            >
               {{ cardProps.title }}
             </h6>
-            <div>
+            <USkeleton
+              v-else
+              class="w-1/2 h-5"
+            />
+            <div v-if="!loadingValues">
               <p class="text-xs">
-                {{ cardProps.shortDescription }}
+                {{ cardProps?.shortDescription }}
               </p>
             </div>
-            <ul class="text-start mt-10 flex flex-col gap-y-3 text-sm">
+            <USkeleton
+              v-else
+              class="w-1/2 h-9"
+            />
+            <ul
+              class="text-start mt-10 flex flex-col gap-y-3 text-sm"
+              v-if="!loadingValues"
+            >
               <li
-                v-for="(items, index) in bulletPoints"
+                v-for="(point, index) in cardProps?.bulletPoints"
                 :key="index"
                 class="flex gap-x-2"
               >
@@ -53,20 +61,34 @@
                   </svg>
                 </div>
                 <span>
-                  {{ items }}
+                  {{ point }}
                 </span>
               </li>
             </ul>
+            <USkeleton
+              v-else
+              class="w-full h-32"
+            />
           </div>
-          <div class="flex flex-col gap-y-4">
-            <div class="text-2xl font-bold">£{{ price / 100 }}</div>
+          <div class="flex flex-col gap-y-4 items-center">
+            <div
+              v-if="!loadingValues"
+              class="text-2xl font-bold"
+            >
+              {{ isFreePlan ? 'Free!' : '£' + price / 100 }}
+            </div>
+            <USkeleton
+              v-else
+              class="w-1/2 h-9"
+            />
             <ElementButton
               :disabled="loading"
               size="medium"
               intent="primary"
               @click="handleCardClick()"
+              class="w-full"
             >
-              {{ loading ? 'Loading...' : cardText }} {{ userAuthState }}
+              {{ loading ? 'Loading...' : cardText }}
             </ElementButton>
           </div>
         </div>
@@ -76,17 +98,18 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore, type AuthStates } from '~/stores/userStore';
+import { useUserStore } from '~/stores/userStore';
 import { storeToRefs } from 'pinia';
 
 const cardProps = defineProps<{
   title: string;
   planType: string;
-  price: number;
+  price: number | 0;
   shortDescription?: string | null;
-  bulletPoints?: { name: string }[];
+  bulletPoints?: string[];
   mostPopular?: string;
   index: number;
+  loadingValues: boolean;
 }>();
 
 type modalVales = {
@@ -117,6 +140,10 @@ const cardText = computed(() => {
   } else {
     return 'Login or Sign up';
   }
+});
+
+const isFreePlan = computed(() => {
+  return cardProps.planType === 'free';
 });
 
 onMounted(async () => {

@@ -25,27 +25,37 @@ export const useUserStore = defineStore('userStore', () => {
     const auth: Auth = getAuth();
     const db = getFirestore();
     try {
+      // creating the user in the authentication
       const userCredentials = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
       if (userCredentials && userCredentials.user.uid) {
+        // we have successfully created the user - set the auth state to authed
         userAuthState.value = 'authed';
+
         //now the user is created, we can add the user to the database
+        // this needs to be changed to set the userId as the doc id
         try {
           await setDoc(doc(db, 'users', email), {
             email: email,
             subscription: {
-              active: false,
+              subscriptionActive: false,
             },
           });
-        } catch (error: unknown) {
+        } catch (error) {
+          if (error instanceof Error) {
+            throw createError({
+              statusCode: 500,
+              message: error.message,
+            });
+          }
           console.error(error);
         }
         return true;
       }
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         return error.message;
       }
@@ -63,7 +73,7 @@ export const useUserStore = defineStore('userStore', () => {
       // sign out of firebase
       await signOut(auth);
       // reset the user
-      resetUser();
+      await resetUser();
       console.log('user signed out');
       console.log(userAuthState.value);
 

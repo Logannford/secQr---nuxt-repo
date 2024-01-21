@@ -1,16 +1,16 @@
-import Stripe from "stripe";
-import type { StripeResponse } from "~/types/StripeResponse";
-import type { RuntimeConfig } from "nuxt/schema";
+import Stripe from 'stripe';
+import type { StripeResponse } from '~/types/StripeResponse';
+import type { RuntimeConfig } from 'nuxt/schema';
 
 export default defineEventHandler(async (event) => {
   const config: RuntimeConfig = useRuntimeConfig();
 
   // params that come from the front end (request body)
-  const params = await readBody(event);
+  const params = await readBody<Record<string, string>>(event);
 
   //create a new stripe instance
   const stripe: Stripe = new Stripe(config.private.stripeSecretKey, {
-    apiVersion: "2023-08-16",
+    apiVersion: '2023-08-16',
   });
 
   //            CUSTOMER LOOKUP / CREATION METHODS
@@ -78,7 +78,7 @@ export default defineEventHandler(async (event) => {
     if (!user || !user.email) {
       throw createError({
         statusCode: 400,
-        message: "Missing payment intent AND / OR user",
+        message: 'Missing payment intent AND / OR user',
       });
     }
 
@@ -86,13 +86,13 @@ export default defineEventHandler(async (event) => {
     try {
       const invoice: Stripe.Invoice = await stripe.invoices.create({
         customer: user?.id,
-        description: "Test Invoice",
+        description: 'Test Invoice',
         auto_advance: true,
 
         // automatic_tax: {
         //   enabled: true
         // },
-        currency: "gbp",
+        currency: 'gbp',
       });
 
       // create an invoice item
@@ -105,7 +105,7 @@ export default defineEventHandler(async (event) => {
         invoice: invoice?.id,
         customer: user?.id,
         unit_amount: amount,
-        currency: "gbp",
+        currency: 'gbp',
         quantity: 1,
       });
       const finalizedInvoice: Stripe.Response<Stripe.Invoice> =
@@ -117,14 +117,14 @@ export default defineEventHandler(async (event) => {
       if (!paymentIntentId) {
         throw createError({
           statusCode: 500,
-          message: "Failed to finalize invoice",
+          message: 'Failed to finalize invoice',
         });
       }
 
       let paymentIntent: Stripe.PaymentIntent | null;
 
       // if the payment intent is a string, we need to update it
-      if (typeof paymentIntentId === "string") {
+      if (typeof paymentIntentId === 'string') {
         await stripe.paymentIntents.retrieve(paymentIntentId);
       }
 
@@ -143,7 +143,7 @@ export default defineEventHandler(async (event) => {
       if (!paymentIntent.client_secret)
         throw createError({
           statusCode: 500,
-          message: "Failed to create payment intent",
+          message: 'Failed to create payment intent',
         });
 
       return paymentIntent?.client_secret;
@@ -167,10 +167,10 @@ export default defineEventHandler(async (event) => {
     const planType = params?.planType;
 
     if (!userEmail || !planType) {
-      console.log("no email or plan type");
+      console.log('no email or plan type');
       throw createError({
         statusCode: 400,
-        message: "Missing customer email OR plan type",
+        message: 'Missing customer email OR plan type',
       });
     }
 
@@ -179,15 +179,15 @@ export default defineEventHandler(async (event) => {
       name: string;
     }[] = [
       {
-        name: "single",
+        name: 'single',
         price: 199,
       },
       {
-        name: "monthly",
+        name: 'monthly',
         price: 499,
       },
       {
-        name: "yearly",
+        name: 'yearly',
         price: 699,
       },
     ];
