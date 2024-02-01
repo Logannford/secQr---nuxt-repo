@@ -124,7 +124,15 @@ onMounted(async () => {
 
     const { invoice, paymentPrice } = stripeResponse?.data?.value;
 
-    paymentIntentClientSecret.value = invoice;
+    if (invoice.kind === 'none')
+      return router.push({
+        path: '/pricing',
+        query: {
+          error: 'true',
+        },
+      });
+
+    paymentIntentClientSecret.value = invoice.value;
     paymentDetails.Price = paymentPrice / 100;
     paymentDetails.Email = currentUserEmail.value;
 
