@@ -16,6 +16,7 @@
     "@nuxt/ui": "^2.8.0",
     "@nuxthq/ui": "^2.7.0",
     "@nuxtjs/prismic": "^3.1.0",
+    "@nuxtjs/supabase": "^1.1.6",
     "@slicemachine/adapter-nuxt": "^0.3.28",
     "@types/node": "^18.17.3",
     "@vueuse/core": "^10.7.1",
@@ -24,6 +25,7 @@
     "cypress": "^12.17.4",
     "nuxt": "^3.6.5",
     "postcss": "^8.4.28",
+    "prisma": "^5.9.1",
     "slice-machine-ui": "^1.21.2",
     "tailwindcss": "^3.3.3",
     "typescript": "^5.1.6"
@@ -31,6 +33,7 @@
   "dependencies": {
     "@iconify-json/heroicons": "^1.1.12",
     "@pinia/nuxt": "^0.4.11",
+    "@prisma/client": "^5.9.1",
     "@prismicio/helpers": "^2.3.9",
     "@stripe/stripe-js": "^2.1.1",
     "class-variance-authority": "^0.7.0",

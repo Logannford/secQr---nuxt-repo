@@ -44,7 +44,13 @@ export default defineNuxtConfig({
     },
   },
   css: ['~/assets/css/main.css'],
-  modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxtjs/prismic', '@vueuse/nuxt'],
+  modules: [
+    '@nuxt/ui',
+    '@pinia/nuxt',
+    '@nuxtjs/prismic',
+    '@vueuse/nuxt',
+    '@nuxtjs/supabase',
+  ],
 
   postcss: {
     plugins: {
@@ -60,6 +66,9 @@ export default defineNuxtConfig({
   runtimeConfig: {
     private: {
       stripeSecretKey: '',
+      supabaseKey: '',
+      databaseKey: '',
+      directDatabaseKey: '',
     },
     public: {
       firebaseApiKey: '',
@@ -72,7 +81,13 @@ export default defineNuxtConfig({
 
       appDomain: '',
       stripePublicKey: '',
+
+      supabaseUrl: '',
     },
+  },
+
+  supabase: {
+    redirect: false,
   },
 
   prismic: {

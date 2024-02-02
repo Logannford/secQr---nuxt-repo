@@ -3,6 +3,10 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Supabase setup
+ */
+
 /* 
   because this is a Single page application, onMounted will only run once
   we will need to watch the URL (route.path) to see if it changes when 
@@ -10,7 +14,6 @@
 
   we will need to watch the route path and the auth state from the store
 */
-
 import { useUserStore } from '~/stores/userStore';
 import { storeToRefs } from 'pinia';
 
