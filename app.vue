@@ -3,10 +3,6 @@
 </template>
 
 <script setup lang="ts">
-/**
- * Supabase setup
- */
-
 /* 
   because this is a Single page application, onMounted will only run once
   we will need to watch the URL (route.path) to see if it changes when 
