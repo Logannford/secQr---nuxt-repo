@@ -8,13 +8,17 @@ import {
 } from 'firebase/auth';
 import { defineStore } from 'pinia';
 import type { User, Auth } from 'firebase/auth';
-import { doc, setDoc, getFirestore } from 'firebase/firestore';
-import { supabaseClient } from '~/utils/supabaseClient';
+import { getFirestore } from 'firebase/firestore';
+import { type User as SupabaseUser } from 'prisma/prisma-client';
 
 export type AuthStates = 'init' | 'authed' | 'not-authed';
 
+export type SupabaseUserSignUp = Pick<
+  SupabaseUser,
+  'uid' | 'email' | 'createdAt' | 'updatedAt'
+>;
+
 export const useUserStore = defineStore('userStore', () => {
-  const supabase = supabaseClient;
   // set the user's auth state to 'fetching' - meaning not authed yet && not not-authed
   const userAuthState = ref<AuthStates>('init');
 
@@ -37,27 +41,29 @@ export const useUserStore = defineStore('userStore', () => {
         password
       );
       console.log('user created');
-      if (userCredentials && userCredentials.user.uid) {
+      if (
+        userCredentials &&
+        userCredentials.user.uid &&
+        userCredentials.user.email
+      ) {
         // we have successfully created the user - set the auth state to authed
         userAuthState.value = 'authed';
 
         //now the user is created, we can add the user to the database
         // this needs to be changed to set the userId as the doc id
         try {
-          console.log('adding user to database');
-          const test = await supabase
-            .from('User')
-            .insert([
-              {
-                uid: userCredentials.user.uid,
-                email: userCredentials.user.email,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-              },
-            ])
-            .select();
+          const userDetails: SupabaseUserSignUp = {
+            uid: userCredentials.user.uid,
+            email: userCredentials.user.email,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          };
 
-          console.log(test);
+          // hit the prisma backend to add the user to the supabase database
+          await useFetch('/api/database/user/create', {
+            method: 'POST',
+            body: userDetails,
+          });
         } catch (error) {
           if (error instanceof Error) {
             throw createError({
