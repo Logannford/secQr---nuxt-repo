@@ -1,18 +1,33 @@
 ## Technologies this Project uses:
 
+### Development Technologies
+
 - Nuxt 3
 - Vue 3
 - Typescript
 - Tailwind
-- Firebase Auth
-- Firebase Firestore
 - Pinia
+
+### Third Party services
+
+- Firebase Auth
+- Supabase PostgreSQL database
+- Prisma
+- Stripe
+
+### Headless CMS
+
+- Prismic
+
+### Unit Testing
+
+- Cypress
+
+### Misc Dev packages
+
 - Class Variance Authority
 - Qrious
-- Prismic
-- Cypress
 - NuxtUi
-- Stripe
 
 # Nuxt 3 Minimal Starter
 

@@ -93,21 +93,19 @@ const handleRegistration = async () => {
   loading.value = true;
 
   // Show loading spinner for a minimum of 2 seconds
-  const signUpPromise = userSignUp(email.value, password.value);
+  const signUp = await userSignUp(email.value, password.value);
 
   // Set a minimum timeout of 2 seconds
-  const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 2000));
+  //const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 2000));
 
   // Wait for both the timeout and sign-up promise to complete
-  await Promise.all([timeoutPromise, signUpPromise]);
-
-  const signUpResult = await signUpPromise;
+  //await Promise.all([timeoutPromise, signUpPromise]);
 
   // Check if sign-up was successful or not
   // sign up result will be true if successful, otherwise the error message as string
-  if (signUpResult !== true) {
+  if (signUp !== true) {
     error.value = true;
-    errorMessage.value = signUpResult as string;
+    errorMessage.value = signUp as string;
   } else
     route.push({
       path: 'pricing',

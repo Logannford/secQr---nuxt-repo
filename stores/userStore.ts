@@ -8,9 +8,15 @@ import {
 } from 'firebase/auth';
 import { defineStore } from 'pinia';
 import type { User, Auth } from 'firebase/auth';
-import { doc, setDoc, getFirestore } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
+import { type User as SupabaseUser } from 'prisma/prisma-client';
 
 export type AuthStates = 'init' | 'authed' | 'not-authed';
+
+export type SupabaseUserSignUp = Pick<
+  SupabaseUser,
+  'uid' | 'email' | 'createdAt' | 'updatedAt'
+>;
 
 export const useUserStore = defineStore('userStore', () => {
   // set the user's auth state to 'fetching' - meaning not authed yet && not not-authed
@@ -23,6 +29,7 @@ export const useUserStore = defineStore('userStore', () => {
     email: string,
     password: string
   ): Promise<boolean | string> => {
+    console.log('signing up');
     //const user = useState<User | null>("fb_user", (): null => null);
     const auth: Auth = getAuth();
     const db = getFirestore();
@@ -33,18 +40,29 @@ export const useUserStore = defineStore('userStore', () => {
         email,
         password
       );
-      if (userCredentials && userCredentials.user.uid) {
+      console.log('user created');
+      if (
+        userCredentials &&
+        userCredentials.user.uid &&
+        userCredentials.user.email
+      ) {
         // we have successfully created the user - set the auth state to authed
         userAuthState.value = 'authed';
 
         //now the user is created, we can add the user to the database
         // this needs to be changed to set the userId as the doc id
         try {
-          await setDoc(doc(db, 'users', email), {
-            email: email,
-            subscription: {
-              subscriptionActive: false,
-            },
+          const userDetails: SupabaseUserSignUp = {
+            uid: userCredentials.user.uid,
+            email: userCredentials.user.email,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          };
+
+          // hit the prisma backend to add the user to the supabase database
+          await useFetch('/api/database/user/create', {
+            method: 'POST',
+            body: userDetails,
           });
         } catch (error) {
           if (error instanceof Error) {
@@ -156,7 +174,6 @@ export const useUserStore = defineStore('userStore', () => {
       auth,
       onAuthStateChanged(auth, async (user: User | null) => {
         if (!getApps().length) return;
-
         // if we have an active user, then set the global user
         if (user) {
           currentUser.value = auth.currentUser;

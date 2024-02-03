@@ -4,7 +4,7 @@
     :data-slice-variation="slice.variation"
   >
     <div
-      class="text-dark-purple h-full lg:h-screen w-full flex flex-col gap-y-12 justify-center items-center bg-white/95 inside-container"
+      class="text-dark-purple h-full lg:h-screen w-full flex flex-col gap-y-12 justify-center items-center bg-white/95 py-10"
     >
       <div class="flex flex-col items-center gap-y-3">
         <h6
@@ -33,7 +33,7 @@
       </div> -->
       <div
         v-if="!loading"
-        class="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-5 w-[55%] items-end h-max"
+        class="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-5 w-3/4 xl:w-[55%] items-end h-max"
       >
         <div
           v-for="(product, index) in productList"

@@ -55,23 +55,17 @@
 <script setup lang="ts">
 import { useUserStore } from '~/stores/userStore';
 import { getAuth } from 'firebase/auth';
-
 const userStore = useUserStore();
-
 const email = ref<string>('');
 const password = ref<string>('');
 const loading = ref<boolean>(false);
-
 const handleLogin = async () => {
   if (!email.value || !password.value) return;
-
   // if we have a user, sign them out
   if (getAuth().currentUser) await userStore.signOutUser();
-
   try {
     // use the login method from the userStore
     await userStore.userLoginIn(email.value, password.value);
-
     // if we have a user, redirect them to the dashboard
     if (getAuth().currentUser) {
       await useRouter().push({
@@ -82,7 +76,6 @@ const handleLogin = async () => {
     console.log(error);
   }
 };
-
 const validEmail = computed<boolean>(() => {
   return /[!@#$%^&*(),.?":{}|<>]/.test(email.value);
 });

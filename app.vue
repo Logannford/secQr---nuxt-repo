@@ -10,7 +10,6 @@
 
   we will need to watch the route path and the auth state from the store
 */
-
 import { useUserStore } from '~/stores/userStore';
 import { storeToRefs } from 'pinia';
 
