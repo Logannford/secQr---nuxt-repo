@@ -1,11 +1,11 @@
 import { PrismaClient } from 'prisma/prisma-client';
-import { type SupabaseUserSignUp } from '~/stores/userStore';
+import type { User } from 'prisma/prisma-client';
 
 export default defineEventHandler(async (event) => {
   // new prisma client
   const prisma = new PrismaClient();
   // user details from the body
-  const userDetails: SupabaseUserSignUp = await readBody(event);
+  const userDetails: Partial<User> = await readBody(event);
 
   // we need the uid in order to update the user
   if (!userDetails.uid)
