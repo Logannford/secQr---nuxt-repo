@@ -1,7 +1,7 @@
 <template>
   <nav class="text-black bg-white/95 shadow-black shadow-sm">
     <div
-      class="flex item-center justify-between w-full container inside-container"
+      class="flex item-center justify-between w-full container inside-container py-2"
     >
       <div class="flex gap-x-16 items-center">
         <div class="text-2xl font-bold">secQr</div>
@@ -35,15 +35,8 @@
       <div class="flex gap-x-4">
         <UButton
           v-if="userAuthed"
-          :label="dashboardLabel"
-          to="/dashboard"
-          class="!text-black"
-          variant="outline"
-        />
-        <UButton
-          v-if="userAuthed"
           label="Log Out"
-          class="!text-black"
+          class="!text-black !px-3 !py-2"
           @click="signOutUser()"
           variant="outline"
         />
