@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-full gap-x-20 items-center justify-center text-white">
     <!-- signup page content wrapper -->
-    <div class="flex flex-col gap-y-8 min-w-[711px]">
+    <div class="flex flex-col gap-y-8 min-w-[711px] max-h-[316px]">
       <div
         class="flex flex-col gap-y-3"
         v-if="!featureClicked"
@@ -18,10 +18,15 @@
       <!-- if a button has been clicked, this is where the component is shown -->
       <div
         v-else
-        class="flex flex-col gap-y-3 min-h-[252px]"
+        class="flex flex-col gap-y-3 h-[252px]"
       >
-        <component :is="selectedFeature" />
+        <NoDomainNeeded v-if="selectedFeature === 'NoDomainNeeded'" />
+        <PageBuilder v-if="selectedFeature === 'PageBuilder'" />
+        <SelfHosting v-if="selectedFeature === 'SelfHosting'" />
+        <AIAssistance v-if="selectedFeature === 'AIAssistance'" />
+        <Analytics v-if="selectedFeature === 'Analytics'" />
       </div>
+      {{ selectedFeature }}
       <!-- what we have to offer carousel / buttons -->
       <div class="max-w-[44rem]">
         <NuxtMarquee
