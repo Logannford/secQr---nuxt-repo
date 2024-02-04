@@ -26,10 +26,6 @@ export default defineNuxtConfig({
         },
         {
           rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Solway',
-        },
-        {
-          rel: 'stylesheet',
           href: 'https://fonts.googleapis.com/css2?family=Quicksand',
         },
         {

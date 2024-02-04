@@ -37,10 +37,15 @@ p {
   font-family: 'Quicksand', sans-serif;
 }
 
+span,
+a {
+  font-family: 'Quicksand', sans-serif;
+}
+
 h1,
 h2,
 h3,
 h4,
 h5 {
-  font-family: 'Karla', sans-serif;
+  font-family: 'Cairo', sans-serif;
 }

@@ -1,9 +1,9 @@
 <template>
   <form
     @submit.prevent="handleRegistration()"
-    class="flex flex-col gap-y-8 bg-white/5 rounded-xl p-5 w-80"
+    class="flex flex-col gap-y-8 bg-white/5 rounded-xl p-5 w-96"
   >
-    <h3 class="text-2xl font-bold flex justify-center w-full">
+    <h3 class="text-3xl font-bold flex justify-center w-full">
       Create an account
     </h3>
 
@@ -15,7 +15,7 @@
             v-model="email"
             icon="i-heroicons-envelope"
             padding="md"
-            placeholder="hello@secqr.com"
+            placeholder="welcome@secqr.com"
             type="text"
             :valid="!validEmail"
             :errorMessage="validEmail ? 'Invalid email' : ''"
@@ -36,13 +36,25 @@
         </UFormGroup>
       </div>
 
-      <UButton
-        :loading="loading"
-        :disabled="!validEmail || validPassword"
-        label="Sign Up"
-        type="submit"
-        class="!text-black justify-center"
-      />
+      <div class="flex flex-col gap-y-4">
+        <UButton
+          :loading="loading"
+          :disabled="!validEmail || validPassword"
+          label="Sign Up"
+          type="submit"
+          class="!text-black justify-center"
+        />
+        <UDivider label="OR" />
+        <!-- already have an account? -->
+        <div class="flex justify-center hover:!underline !duration-300">
+          <ULink
+            to="/login"
+            class="!text-white !font-thin !text-xs"
+          >
+            Already have an account?
+          </ULink>
+        </div>
+      </div>
     </div>
   </form>
 </template>
