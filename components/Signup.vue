@@ -8,20 +8,26 @@
     </h3>
 
     <!-- input area-->
-    <div class="flex flex-col gap-y-8">
-      <div class="flex flex-col gap-y-4">
-        <UFormGroup label="Email Address">
+    <div class="flex flex-col gap-y-10">
+      <div class="flex flex-col gap-y-6">
+        <UFormGroup
+          label="Email Address"
+          class="!text-sm"
+        >
           <UInput
             v-model="email"
             icon="i-heroicons-envelope"
             padding="md"
-            placeholder="welcome@secqr.com"
+            placeholder="hello@secqr.com"
             type="text"
             :valid="!validEmail"
             :errorMessage="validEmail ? 'Invalid email' : ''"
           />
         </UFormGroup>
-        <UFormGroup label="Password">
+        <UFormGroup
+          label="Password"
+          class="!text-sm"
+        >
           <UInput
             v-model="password"
             placeholder="Password"
@@ -46,13 +52,13 @@
         />
         <UDivider label="OR" />
         <!-- already have an account? -->
-        <div class="flex justify-center hover:!underline !duration-300">
-          <ULink
-            to="/login"
-            class="!text-white !font-thin !text-xs"
+        <div class="flex justify-center">
+          <NuxtLink
+            href="/login"
+            class="text-sm relative after:bg-white after:absolute after:h-0.5 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer hover:opacity-95"
           >
             Already have an account?
-          </ULink>
+          </NuxtLink>
         </div>
       </div>
     </div>
