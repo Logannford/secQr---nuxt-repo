@@ -1,64 +1,50 @@
 <template>
-  <div class="w-full flex h-[calc(100vh-3.75rem)] justify-center items-center">
-    <div
-      class="flex flex-col gap-y-10 items-center h-fit w-fit p-12 rounded-xl border-2 border-white/5 bg-[#7e6161]/5"
-    >
-      <form
-        @submit.prevent="handleRegistration()"
-        class="flex flex-col gap-y-6 w-56 justify-center items-center text-white"
-      >
-        <div class="relative">
-          <input
-            data-cy="email-field"
-            type="text"
-            v-model="email"
-            class="input-dark !bg-transparent peer placeholder-transparent"
-            placeholder="hello@example.com"
-            name="email"
-            autocomplete="on"
-          />
-          <label
-            for="email"
-            class="floating-label"
-          >
-            Email
-          </label>
-        </div>
-        <div class="relative">
-          <input
-            data-cy="password-field"
-            type="password"
-            v-model="password"
-            placeholder="password"
-            autocomplete="on"
-            class="input-dark !bg-transparent peer placeholder-transparent"
-            name="password"
-          />
-          <label
-            for="password"
-            class="floating-label"
-          >
-            Password
-          </label>
-        </div>
-        <input
-          class="py-2 bg-white text-black w-full rounded hover:cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
-          data-cy="submit-btn"
-          type="submit"
-          :value="loading ? 'Loading...' : 'Submit'"
-          :disabled="!validEmail || validPassword"
-        />
-      </form>
-    </div>
+  <form
+    @submit.prevent="handleRegistration()"
+    class="flex flex-col gap-y-8 bg-white/5 rounded-xl p-5 w-80"
+  >
+    <h3 class="text-2xl font-bold flex justify-center w-full">
+      Create an account
+    </h3>
 
-    <div
-      v-if="error"
-      data-cy="error-field"
-      class="text-red-500"
-    >
-      {{ errorMessage }}
+    <!-- input area-->
+    <div class="flex flex-col gap-y-8">
+      <div class="flex flex-col gap-y-4">
+        <UFormGroup label="Email Address">
+          <UInput
+            v-model="email"
+            icon="i-heroicons-envelope"
+            padding="md"
+            placeholder="hello@secqr.com"
+            type="text"
+            :valid="!validEmail"
+            :errorMessage="validEmail ? 'Invalid email' : ''"
+          />
+        </UFormGroup>
+        <UFormGroup label="Password">
+          <UInput
+            v-model="password"
+            placeholder="Password"
+            icon="i-heroicons-lock-closed"
+            padding="md"
+            type="password"
+            :valid="!validPassword"
+            :errorMessage="
+              validPassword ? 'Password must be at least 8 characters' : ''
+            "
+          />
+        </UFormGroup>
+      </div>
+
+      <UButton
+        :loading="loading"
+        :disabled="!validEmail || validPassword"
+        label="Sign Up"
+        type="submit"
+        class="!text-black justify-center"
+      />
     </div>
-  </div>
+  </form>
 </template>
 
 <script setup lang="ts">
@@ -84,7 +70,6 @@ const validPassword = computed<boolean>(() => {
 });
 
 const loading = ref<boolean>(false);
-
 const handleRegistration = async () => {
   // 100% clear out the current user on the sign up page,
   // we do this in 'app.vue' on 'sign-up' route change
