@@ -44,7 +44,8 @@
     "pinia": "^2.1.6",
     "qrious": "^4.0.2",
     "stripe": "^13.3.0",
-    "swiper": "^10.2.0"
+    "swiper": "^10.2.0",
+    "vue-typewriter-effect": "^1.0.1"
   },
   "overrides": {
     "vue": "latest"

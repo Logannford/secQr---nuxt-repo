@@ -26,7 +26,6 @@
         <AIAssistance v-if="selectedFeature === 'AIAssistance'" />
         <Analytics v-if="selectedFeature === 'Analytics'" />
       </div>
-      {{ selectedFeature }}
       <!-- what we have to offer carousel / buttons -->
       <div class="max-w-[44rem]">
         <NuxtMarquee
