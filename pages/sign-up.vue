@@ -43,6 +43,7 @@
             :key="feature.id"
             :label="feature.label"
             class="!mx-5"
+            variant="outline"
             @click="handleFeatureClick(feature.component)"
             :class="{
               '!bg-light-purple': selectedFeature === feature.component,

@@ -3,7 +3,8 @@ export default defineAppConfig({
     button: {
       base: '!bg-white text-black rounded-lg duration-300',
       variant: {
-        outline: 'border border-gray-400 hover:!bg-light-purple/50 px-6 py-2',
+        outline:
+          'border !bg-transparent !text-white [&>span]:relative [&>span]:after:bg-white [&>span]:after:absolute [&>span]:after:h-0.5 [&>span]:after:w-0 [&>span]:after:bottom-0 [&>span]:after:left-0 hover:[&>span]:after:w-full [&>span]:after:transition-all [&>span]:after:duration-300 cursor-pointer [&>span]:hover:opacity-95 px-6 py-2',
       },
     },
     checkbox: {
