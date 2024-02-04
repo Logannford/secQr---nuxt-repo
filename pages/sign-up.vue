@@ -2,30 +2,35 @@
   <div class="flex h-full gap-x-20 items-center justify-center text-white">
     <!-- signup page content wrapper -->
     <div class="flex flex-col gap-y-8 min-w-[711px] max-h-[316px]">
-      <div
-        class="flex flex-col gap-y-3"
-        v-if="!featureClicked"
+      <Transition
+        name="fade"
+        mode="out-in"
       >
-        <h1 class="text-xl md:text-3xl lg:text-5xl xl:text-7xl font-bold">
-          Starting your online <br />
-          journey has never been <br />
-          easier.
-        </h1>
-        <span>
-          Everything you need to kickstart your business, in one application.
-        </span>
-      </div>
-      <!-- if a button has been clicked, this is where the component is shown -->
-      <div
-        v-else
-        class="flex flex-col gap-y-3 h-[252px]"
-      >
-        <NoDomainNeeded v-if="selectedFeature === 'NoDomainNeeded'" />
-        <PageBuilder v-if="selectedFeature === 'PageBuilder'" />
-        <SelfHosting v-if="selectedFeature === 'SelfHosting'" />
-        <AIAssistance v-if="selectedFeature === 'AIAssistance'" />
-        <Analytics v-if="selectedFeature === 'Analytics'" />
-      </div>
+        <div
+          class="flex flex-col gap-y-3"
+          v-if="!featureClicked"
+        >
+          <h1 class="text-xl md:text-3xl lg:text-5xl xl:text-7xl font-bold">
+            Starting your online <br />
+            journey has never been <br />
+            easier.
+          </h1>
+          <span>
+            Everything you need to kickstart your business, in one application.
+          </span>
+        </div>
+        <!-- if a button has been clicked, this is where the component is shown -->
+        <div
+          v-else
+          class="flex flex-col gap-y-3 h-[252px]"
+        >
+          <NoDomainNeeded v-if="selectedFeature === 'NoDomainNeeded'" />
+          <PageBuilder v-if="selectedFeature === 'PageBuilder'" />
+          <SelfHosting v-if="selectedFeature === 'SelfHosting'" />
+          <AIAssistance v-if="selectedFeature === 'AIAssistance'" />
+          <Analytics v-if="selectedFeature === 'Analytics'" />
+        </div>
+      </Transition>
       <!-- what we have to offer carousel / buttons -->
       <div class="max-w-[44rem]">
         <NuxtMarquee
@@ -112,3 +117,15 @@ const handleFeatureClick = (feature: string) => {
   selectedFeature.value = feature;
 };
 </script>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
