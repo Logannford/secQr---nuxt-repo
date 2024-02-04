@@ -46,6 +46,7 @@ export default defineNuxtConfig({
     '@nuxtjs/prismic',
     '@vueuse/nuxt',
     '@nuxtjs/supabase',
+    'nuxt-marquee',
   ],
 
   postcss: {

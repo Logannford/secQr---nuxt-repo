@@ -24,6 +24,7 @@
     "autoprefixer": "^10.4.15",
     "cypress": "^12.17.4",
     "nuxt": "^3.6.5",
+    "nuxt-marquee": "^1.0.2",
     "postcss": "^8.4.28",
     "prisma": "^5.9.1",
     "slice-machine-ui": "^1.21.2",

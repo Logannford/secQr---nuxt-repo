@@ -1,7 +1,7 @@
 <template>
   <form
     @submit.prevent="handleRegistration()"
-    class="flex flex-col gap-y-8 bg-white/5 rounded-xl p-5 w-96"
+    class="flex flex-col gap-y-8 bg-white/5 rounded-xl p-7 w-96"
   >
     <h3 class="text-3xl font-bold flex justify-center w-full">
       Create an account
