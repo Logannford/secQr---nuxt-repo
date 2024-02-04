@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-full gap-x-20 items-center justify-center text-white">
     <!-- signup page content wrapper -->
-    <div class="flex flex-col gap-y-8">
+    <div class="flex flex-col gap-y-8 min-w-[711px]">
       <div
         class="flex flex-col gap-y-3"
         v-if="!featureClicked"
@@ -18,7 +18,7 @@
       <!-- if a button has been clicked, this is where the component is shown -->
       <div
         v-else
-        class="flex flex-col gap-y-3"
+        class="flex flex-col gap-y-3 min-h-[252px]"
       >
         <component :is="selectedFeature" />
       </div>
@@ -34,12 +34,7 @@
             :key="feature.id"
             :label="feature.label"
             class="!mx-5"
-            @click="
-              () => {
-                featureClicked = true;
-                selectedFeature = feature.component;
-              }
-            "
+            @click="handleFeatureClick(feature.component)"
             :class="{
               '!bg-light-purple': selectedFeature === feature.component,
             }"
@@ -100,4 +95,16 @@ const features = [
     icon: 'analytics',
   },
 ];
+
+const handleFeatureClick = (feature: string) => {
+  // if the same feature has been clicked, then close it
+  if (featureClicked.value && feature === selectedFeature.value) {
+    featureClicked.value = false;
+    selectedFeature.value = '';
+    return;
+  }
+
+  featureClicked.value = true;
+  selectedFeature.value = feature;
+};
 </script>
