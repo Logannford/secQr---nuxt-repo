@@ -43,13 +43,22 @@
       </div>
 
       <div class="flex flex-col gap-y-4">
-        <UButton
-          :loading="loading"
-          :disabled="!validEmail || validPassword"
-          label="Sign Up"
-          type="submit"
-          class="!text-black justify-center"
-        />
+        <div class="flex flex-col gap-y-3">
+          <UCheckbox
+            label="By signing up, you agree to our Terms of Service and Privacy Policy"
+            class="!text-sm"
+            v-model="checked"
+            @click="checked = !checked"
+            required
+          />
+          <UButton
+            :loading="loading"
+            :disabled="!validEmail || validPassword || !checked"
+            label="Sign Up"
+            type="submit"
+            class="!text-black justify-center"
+          />
+        </div>
         <UDivider label="OR" />
         <!-- already have an account? -->
         <div class="flex justify-center">
@@ -71,6 +80,7 @@ import { useUserStore } from '~/stores/userStore';
 
 const email = ref<string>('');
 const password = ref<string>('');
+const checked = ref<boolean>(false);
 const error = ref<boolean>(false);
 const errorMessage = ref<string>('');
 const route = useRouter();

@@ -6,6 +6,9 @@ export default defineAppConfig({
         outline: 'border border-gray-400 hover:!bg-light-purple/50 px-6 py-2',
       },
     },
+    checkbox: {
+      background: 'checked:!bg-light-purple',
+    },
     formGroup: {
       default: '!text-start',
       label: '!text-white  !font-light !text-sm',
