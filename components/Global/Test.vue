@@ -1,11 +1,17 @@
 <template>
-  <nav class="text-black bg-white/95 shadow-black shadow-sm">
-    <div
-      class="flex item-center justify-between w-full container inside-container py-2"
-    >
+  <nav
+    class="text-white/95 bg-[#000814] shadow-black shadow-sm"
+    :class="{
+      'border-b-2 border border-white/5': !signingUp,
+    }"
+  >
+    <div class="flex item-center justify-between w-full py-3 px-10">
       <div class="flex gap-x-16 items-center">
-        <div class="text-2xl font-bold">secQr</div>
-        <ul class="flex gap-x-8 relative">
+        <div class="text-3xl font-bold">secQr</div>
+        <ul
+          class="flex gap-x-8 relative"
+          v-if="!signingUp"
+        >
           <li
             v-for="(item, index) in topLevelNavItems"
             :key="`${item.id}`"
@@ -41,7 +47,7 @@
           variant="outline"
         />
         <UButton
-          v-else
+          v-else-if="!signingUp"
           label="Log In"
           class="!text-black"
           to="/login"
@@ -87,6 +93,10 @@ const handleMouseLeave = () => {
   isMouseOver.value = false;
   if (!isMouseOver.value && active.value) active.value = false;
 };
+
+const signingUp = computed(() => {
+  return useRoute().path === '/sign-up';
+});
 
 onMounted(() => {
   console.log(userAuthed.value);

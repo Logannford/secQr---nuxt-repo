@@ -26,10 +26,6 @@ export default defineNuxtConfig({
         },
         {
           rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Solway',
-        },
-        {
-          rel: 'stylesheet',
           href: 'https://fonts.googleapis.com/css2?family=Quicksand',
         },
         {
@@ -50,6 +46,7 @@ export default defineNuxtConfig({
     '@nuxtjs/prismic',
     '@vueuse/nuxt',
     '@nuxtjs/supabase',
+    'nuxt-marquee',
   ],
 
   postcss: {

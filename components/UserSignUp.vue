@@ -1,54 +1,55 @@
 <template>
-  <div
-    class="w-full h-screen flex flex-col justify-center items-center bg-dark-black"
-  >
-    <h1 class="text-5xl font-bold">Sign up</h1>
-    <form
-      @submit.prevent="handleRegistration()"
-      class="flex flex-col gap-y-6 w-56 justify-center items-center text-white"
+  <div class="w-full flex h-[calc(100vh-3.75rem)] justify-center items-center">
+    <div
+      class="flex flex-col gap-y-10 items-center h-fit w-fit p-12 rounded-xl border-2 border-white/5 bg-[#7e6161]/5"
     >
-      <div class="relative">
+      <form
+        @submit.prevent="handleRegistration()"
+        class="flex flex-col gap-y-6 w-56 justify-center items-center text-white"
+      >
+        <div class="relative">
+          <input
+            data-cy="email-field"
+            type="text"
+            v-model="email"
+            class="input-dark !bg-transparent peer placeholder-transparent"
+            placeholder="hello@example.com"
+            name="email"
+            autocomplete="on"
+          />
+          <label
+            for="email"
+            class="floating-label"
+          >
+            Email
+          </label>
+        </div>
+        <div class="relative">
+          <input
+            data-cy="password-field"
+            type="password"
+            v-model="password"
+            placeholder="password"
+            autocomplete="on"
+            class="input-dark !bg-transparent peer placeholder-transparent"
+            name="password"
+          />
+          <label
+            for="password"
+            class="floating-label"
+          >
+            Password
+          </label>
+        </div>
         <input
-          data-cy="email-field"
-          type="text"
-          v-model="email"
-          class="input-dark !bg-transparent peer placeholder-transparent"
-          placeholder="hello@example.com"
-          name="email"
-          autocomplete="on"
+          class="py-2 bg-white text-black w-full rounded hover:cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
+          data-cy="submit-btn"
+          type="submit"
+          :value="loading ? 'Loading...' : 'Submit'"
+          :disabled="!validEmail || validPassword"
         />
-        <label
-          for="email"
-          class="floating-label"
-        >
-          Email
-        </label>
-      </div>
-      <div class="relative">
-        <input
-          data-cy="password-field"
-          type="password"
-          v-model="password"
-          placeholder="password"
-          autocomplete="on"
-          class="input-dark !bg-transparent peer placeholder-transparent"
-          name="password"
-        />
-        <label
-          for="password"
-          class="floating-label"
-        >
-          Password
-        </label>
-      </div>
-      <input
-        class="py-2 bg-white text-black w-full rounded hover:cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
-        data-cy="submit-btn"
-        type="submit"
-        :value="loading ? 'Loading...' : 'Submit'"
-        :disabled="!validEmail || validPassword"
-      />
-    </form>
+      </form>
+    </div>
 
     <div
       v-if="error"
